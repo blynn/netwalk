@@ -1,9 +1,9 @@
-VERSION=0.4.4
-ALLFILES = *.[ch] Makefile LICENSE README NEWS config helmetr.ttf
+VERSION=0.4.5
+ALLFILES = *.[ch] Makefile LICENSE README NEWS linux/*.[ch] win32/*.[ch] helmetr.ttf
 PROJNAME = netwalk
-ifdef WIN32
+OS ?= linux
+ifeq ("$(OS)", "win32")
 CC = i586-mingw32msvc-gcc
-EFLAGS=-boost -O2 -I /home/ben/cross/SDL/include/SDL
 CFLAGS=-O2 -Wall -I /home/ben/cross/SDL/include/SDL -mwindows
 SDL_LIBS=-L /home/ben/cross/SDL/lib -lmingw32 -lSDLmain -lSDL
 LIBS = $(SDL_LIBS) -lSDL_ttf
@@ -12,6 +12,8 @@ CC = gcc
 CFLAGS=-Wall -O2 -fomit-frame-pointer `sdl-config --cflags`
 SDL_LIBS=`sdl-config --libs`
 LIBS = $(SDL_LIBS) -lSDL_ttf 
+INSTALL = /usr/bin/install
+PREFIX = /usr
 endif
 
 .PHONY: target clean dist
@@ -21,32 +23,45 @@ target : version.h $(PROJNAME)
 version.h : ./Makefile
 	echo '#define VERSION_STRING "'$(VERSION)'"' > version.h
 
-$(PROJNAME) : main.c game.c colour.c widget.c
+config_file.c : $(OS)/config_file.c
+	ln -s $^ $@
+
+$(PROJNAME) : main.c game.c colour.c widget.c config.c config_file.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 DISTNAME=$(PROJNAME)-$(VERSION)
 
-dist: $(ALLFILES)
-	-rm version.h
+clean :
+	-rm $(PROJNAME) *.o version.h config_file.c
+
+dist: $(ALLFILES) clean
 	-rm -rf $(DISTNAME)
 	mkdir $(DISTNAME)
 	cp -rl --parents $(ALLFILES) $(DISTNAME)
 	tar chfz $(DISTNAME).tgz $(DISTNAME)
 	-rm -rf $(DISTNAME)
 
-ifdef WIN32
-bindist : $(PROJNAME)
+ifeq ("$(OS)", "win32")
+zip : target
 	-rm -rf $(DISTNAME)
 	mkdir $(DISTNAME)
 	cp -l LICENSE $(DISTNAME)
 	cp -l $(PROJNAME) $(DISTNAME)/$(PROJNAME).exe
 	cp -l *.ttf $(DISTNAME)
-	cp -l config $(DISTNAME)
+	#cp -l config $(DISTNAME)
 	cp -l /home/ben/cross/SDL/lib/SDL.dll $(DISTNAME)
 	cp -l /home/ben/cross/SDL/lib/SDL_ttf.dll $(DISTNAME)
 	zip $(DISTNAME)-win.zip $(DISTNAME)/*
 	-rm -rf $(DISTNAME)
-endif
+else
 
-clean :
-	-rm $(PROJNAME) *.o version.h
+install : netwalk
+	$(INSTALL) -m 755 netwalk $(PREFIX)/bin
+	$(INSTALL) -d $(PREFIX)/share/$(PROJNAME)
+	$(INSTALL) -m 644 helmetr.ttf $(PREFIX)/share/$(PROJNAME)/
+
+uninstall : clean
+	-rm -f $(PREFIX)/bin/$(PROJNAME)
+	-rm -rf $(PREFIX)/share/$(PROJNAME)
+
+endif

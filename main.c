@@ -42,7 +42,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "colour.h"
 #include "game.h"
 
-char *config_file = "config";
+#include "config.h"
+#include "util.h"
 
 static int interrupted = 0;
 
@@ -77,15 +78,6 @@ enum {
 };
 
 char shifttable[256];
-int show_moves_flag = 0;
-
-struct config_s {
-    char *fontname;
-    char *hsfile;
-    int fontsize;
-};
-typedef struct config_s *config_ptr;
-typedef struct config_s config_t[1];
 
 struct hsentry_s {
     char *name;
@@ -107,10 +99,11 @@ typedef struct gameparm_s gameparm_t[1];
 
 gameparm_t gp;
 
+static config_t config;
+
 SDL_Surface *screen;
 TTF_Font *font;
 int lastmousex, lastmousey;
-config_t config;
 char *player_name;
 int game_won;
 int state;
@@ -214,13 +207,6 @@ button_t b_hs1;
 label_t l_en1;
 textbox_t tb_en1;
 button_t b_en1;
-
-char *clonestr(char *s)
-{
-    char *res = malloc(sizeof(char) * strlen(s) + 1);
-    strcpy(res, s);
-    return res;
-}
 
 SDL_Surface *font_render(char *s, int c)
 {
@@ -1426,136 +1412,7 @@ void window_init(window_ptr w)
     w->widget.computexy = window_computexy;
 }
 
-void parse_option(char *s1, char *s2)
-{
-    if (!strcmp(s1, "showmoves")) {
-	show_moves_flag = atoi(s2);
-    }
-    if (!strcmp(s1, "fontsize")) {
-	config->fontsize = atoi(s2);
-    }
-    if (!strcmp(s1, "font")) {
-	config->fontname = clonestr(s2);
-    }
-    if (!strcmp(s1, "hiscores")) {
-	config->hsfile = clonestr(s2);
-    }
-}
-
-int is_whitespace(char c) 
-{
-    if (strchr(" \t\r\n", c)) return -1;
-    return 0;
-}
-
-void skip_whitespace(FILE *fp)
-{
-    for (;;) {
-	int c;
-	c = getc(fp);
-	if (feof(fp)) return;
-	if (!is_whitespace(c)) {
-	    ungetc(c, fp);
-	    break;
-	}
-    }
-}
-
-void read_word(char *s, FILE *fp)
-{
-    int i = 0;
-
-    skip_whitespace(fp);
-    if (feof(fp)) return;
-
-    for (;;) {
-	int c;
-	c = getc(fp);
-	if (feof(fp)) return;
-	if (is_whitespace(c)) {
-	    ungetc(c, fp);
-	    break;
-	}
-	s[i] = c;
-	i++;
-	if (i >= 128 - 1) break;
-    }
-    s[i] = 0;
-}
-
-void read_line(char *s, FILE *fp)
-{
-    int i = 0;
-
-    for (;;) {
-	int c;
-	c = getc(fp);
-	if (feof(fp)) return;
-	if (c == '\r') {
-	    //safest thing to do?
-	    continue;
-	}
-	if (c == '\n') {
-	    ungetc(c, fp);
-	    break;
-	}
-	s[i] = c;
-	i++;
-	if (i >= 1024 - 1) break;
-    }
-    s[i] = 0;
-}
-
-void read_config()
-{
-    FILE *fp;
-
-    fp = fopen(config_file, "r");
-    if (!fp) {
-	fprintf(stderr,"Can't open config file %s\n", config_file);
-	exit(1);
-    }
-
-    for(;;) {
-	int i;
-	char s1[1024], *s2;
-
-	skip_whitespace(fp);
-	if (feof(fp)) {
-	    break;
-	}
-	read_line(s1, fp);
-	if (feof(fp)) {
-	    break;
-	}
-
-	i = 0;
-	for(;;) {
-	    if (!s1[i]) {
-		s2 = &s1[i];
-		break;
-	    }
-	    if (is_whitespace(s1[i])) {
-		s1[i] = 0;
-		i++;
-		for(;;) {
-		    if (!s1[i] || !is_whitespace(s1[i])) {
-			s2 = &s1[i];
-			break;
-		    }
-		}
-		break;
-	    }
-	    i++;
-	}
-
-	parse_option(s1, s2);
-    }
-
-    fclose(fp);
-}
-
-void add_shiftstring(char *s1, char *s2)
+static void add_shiftstring(char *s1, char *s2)
 {
     int i;
 
@@ -1588,7 +1445,7 @@ int main(int argc, char *argv[])
 	add_shiftstring("[]\\;',./`", "{}|:\"<>?~");
     }
 
-    read_config();
+    config_load(config);
     read_hstable();
     init();
 
@@ -1596,7 +1453,7 @@ int main(int argc, char *argv[])
 
     font = TTF_OpenFont(config->fontname, config->fontsize);
     if (!font) {
-	fprintf(stderr, "error loading font\n");
+	fprintf(stderr, "error loading font %s\n", config->fontname);
 	exit(1);
     }
 
@@ -1639,7 +1496,7 @@ int main(int argc, char *argv[])
 
 	//setup moves and time
 	label_init(l_moves);
-	if (show_moves_flag) {
+	if (config->showmoves) {
 	    window_add_widget(root, l_moves);
 	}
 

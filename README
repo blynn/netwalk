@@ -1,10 +1,10 @@
-README for NetWalk v0.4.2
+README for NetWalk v0.4.5
 Ben Lynn
 
 INTRODUCTION
 
 NetWalk is a puzzle game where the object is to connect every terminal to the
-main server. (These are represented by coloured boxes, so I guess you could
+main server. (These are represented by coloured boxes, so you could
 also imagine them to be water mains, electricity cables, phone lines, etc.)
 
 In this version, not only must every terminal be connected, but every piece of
@@ -15,15 +15,13 @@ USAGE
 Click on a square to rotate its contents. A left click performs an
 anticlockwise rotation and a right click performs a clockwise rotation.
 
-You can select presets, or make a custom game in the options window.
-
 There is one shortcut key: F2 starts a new game.
 
-Edit the "config" file to configure the game and add presets.
+Edit the ".netwalk/config" file to configure the game.
 
 COMPILATION
 
-Type "make" to compile the project.
+Type "make" to compile.
 
 LICENSE
 
