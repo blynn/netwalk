@@ -17,6 +17,7 @@ feature
     text_insert(c : CHARACTER) is
     do
 	string.insert_character(c, cursor)
+	raise_signal(signal_change)
 	update_image
     end
 
@@ -25,6 +26,7 @@ feature
 	if string.count > 0 and then cursor > 1 then
 	    cursor := cursor - 1
 	    string.remove(cursor)
+	    raise_signal(signal_change)
 	    update_image
 	end
     end
@@ -33,6 +35,7 @@ feature
     do
 	if string.count > 0 and then cursor <= string.upper then
 	    string.remove(cursor)
+	    raise_signal(signal_change)
 	    update_image
 	end
     end

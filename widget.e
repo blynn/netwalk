@@ -21,6 +21,10 @@ feature
 	!!signal_table.make
     end
 
+    free is
+    do
+    end
+
     signal_activate : INTEGER is 1
     signal_cancel : INTEGER is 2
     signal_change : INTEGER is 3
@@ -50,10 +54,8 @@ feature
 	offsety := y
     end
 
-    put_geometry(x, y, w, h : INTEGER) is
+    put_size(w, h : INTEGER) is
     do
-	offsetx := x
-	offsety := y
 	width := w
 	height := h
     end

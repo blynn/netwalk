@@ -1,4 +1,7 @@
-README for NetWalk v0.2
+README for NetWalk v0.3
+Ben Lynn
+
+INTRODUCTION
 
 I tried a shareware Windows game called NetWalk once. I liked the idea so
 I decided to implement my own so I could play in Linux, and customize it more.
@@ -6,12 +9,24 @@ I decided to implement my own so I could play in Linux, and customize it more.
 NetWalk is a puzzle game where the object is to connect every terminal to the
 main server. (These are represented by coloured boxes, so I guess you could
 also imagine them to be water mains, electricity cables, phone lines, etc.)
-Clicking on a square will rotate its contents, a left click performs an
-anticlockwise rotation and a right click performs a clockwise rotation.
 
 In this version, not only must every terminal be connected, but every piece of
 cable must also be connected to the main server somehow.
 
-Keys: F2 starts a new game.
+This project is written in SmallEiffel.
 
-Ben Lynn
+USAGE
+
+Click on a square to rotate its contents. A left click performs an
+anticlockwise rotation and a right click performs a clockwise rotation.
+
+You can select presets, or make a custom game in the options window.
+
+There is one shortcut key: F2 starts a new game.
+
+Edit the "config" file to configure the game and add presets.
+
+LICENSE
+
+This project is released under the GNU Public License. See the "LICENSE" file
+for details.

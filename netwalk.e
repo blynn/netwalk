@@ -3,6 +3,8 @@ class NETWALK
 inherit DIR_CONSTANT; SDL_CONSTANT; COLOR_TABLE; CONFIG
 creation make
 feature
+    io_score : IO_SCORE
+
     tile_server_top : INTEGER is 1
     tile_server_bottom : INTEGER is 2
     tile_normal : INTEGER is 3
@@ -10,15 +12,30 @@ feature
 
     board : ARRAY2[TILE]
 
-    default_width : INTEGER is 10
-    default_height : INTEGER is 9
-    min_width : INTEGER is 5
-    max_width : INTEGER is 15
-    min_height : INTEGER is 4
-    max_height : INTEGER is 13
+    width : INTEGER is
+    do
+	Result := current_setting.width
+    end
 
-    width : INTEGER
-    height : INTEGER
+    height : INTEGER is
+    do
+	Result := current_setting.height
+    end
+
+    allow_wrap : BOOLEAN is
+    do
+	Result := current_setting.wrap
+    end
+
+    current_preset : PRESET
+    current_setting : SETTING
+
+    use_setting(s : SETTING) is
+    do
+	!!current_setting.make
+	current_setting.copy(s)
+    end
+
     servertopi : INTEGER is
     do
 	Result := width // 2
@@ -44,62 +61,87 @@ feature
 	Result.render_string("Well Done", font, white)
     end
 
-    allow_wrap : BOOLEAN
-
     seed : INTEGER
     move_count : INTEGER
 
     new_game_button : BUTTON
     options_button : BUTTON
+    hs_button : BUTTON
     quit_button : BUTTON
 
     options_window : OPTIONS_WINDOW
+    newhs_window : NEWHS_WINDOW
+    hs_window : HS_WINDOW
 
     widget_list : LINKED_LIST[WIDGET]
 
-    add_widget(w : WIDGET) is
+    add_widget(w : WIDGET; x, y : INTEGER) is
     do
 	widget_list.add_last(w)
+	w.put_xy(x, y)
     end
+
+    elapsed_seconds : INTEGER
+    elapsed_ticks : INTEGER
+    last_ticks : INTEGER
 
     make is
     local
 	c : COMMAND
+	time : TIME
     do
 	!!widget_list.make
-	seed := 1
-	!!rand.make
+	time.update
+	seed := time.hour * 3600 + time.minute * 60 + time.second
+	!!rand.with_seed(seed)
 	ext_init
 	connected_pipe_color := green
 	disconnected_pipe_color := darkred
 	connected_terminal_color := cyan
 	disconnected_terminal_color := darkpurple
-	width := default_width
-	height := default_height
+	current_preset := config.get_preset(config.default_preset)
+	use_setting(current_preset.setting)
 	!!move_image.make
-	move_image.render_string("moves: " + move_count.to_string, mainfont, white)
+	move_image.new_dummy
+
 	!!best_image.make
-	best_image.render_string("par: " + best.to_string, mainfont, white)
+	best_image.new_dummy
+
+	!!time_image.make
+	time_image.new_dummy
 
 	!!new_game_button.make("New Game")
-	new_game_button.put_geometry(550, 20, 80, 20)
+	new_game_button.put_size(80, 20)
 	!COMMAND_NEW_GAME!c.make(Current)
 	new_game_button.put_command(c, new_game_button.signal_activate)
-	add_widget(new_game_button)
+	add_widget(new_game_button, 550, 20)
 
 	!!options_button.make("Options")
-	options_button.put_geometry(550, 60, 80, 20)
+	options_button.put_size(80, 20)
 	!COMMAND_OPTIONS!c.make(Current)
 	options_button.put_command(c, options_button.signal_activate)
-	add_widget(options_button)
+	add_widget(options_button, 550, 60)
+
+	!!hs_button.make("High Scores")
+	hs_button.put_size(80, 20)
+	!COMMAND_SHOW_HS!c.make(Current)
+	hs_button.put_command(c, hs_button.signal_activate)
+	add_widget(hs_button, 550, 100)
 
 	!!quit_button.make("Quit")
-	quit_button.put_geometry(550, 100, 80, 20)
+	quit_button.put_size(80, 20)
 	!COMMAND_QUIT!c.make(Current)
 	quit_button.put_command(c, quit_button.signal_activate)
-	add_widget(quit_button)
+	add_widget(quit_button, 550, 140)
+
+	!!io_score.make
+	io_score.load(config.score_file)
+	io_score.into_preset_list(config.preset_list)
 
 	make_options_window
+	make_newhs_window
+	make_hs_window
+
 	new_game
 	main_loop
     end
@@ -111,51 +153,75 @@ feature
 	!!options_window.make
 	!COMMAND_OPTIONS_OK!c.make(Current)
 	options_window.put_command(c, options_window.signal_activate)
-	!COMMAND_OPTIONS_CANCEL!c.make(Current)
+	!COMMAND_CLOSE_CURRENT!c.make(Current)
 	options_window.put_command(c, options_window.signal_cancel)
+	options_window.put_xy(200, 100)
+	options_window.put_preset_list(config.preset_list)
     end
 
-    options_cancel is
-    require
-	options_window_showing
+    make_newhs_window is
+    local
+	c : COMMAND
     do
-	options_window_showing := False
+	!!newhs_window.make
+	!COMMAND_NEWHS_OK!c.make(Current)
+	newhs_window.put_command(c, newhs_window.signal_activate)
+	newhs_window.put_xy(200, 100)
+    end
+
+    make_hs_window is
+    local
+	c : COMMAND
+    do
+	!!hs_window.make
+	!COMMAND_CLOSE_CURRENT!c.make(Current)
+	hs_window.put_command(c, hs_window.signal_activate)
+	hs_window.put_xy(200, 100)
+	hs_window.init_scores(config.preset_list)
+    end
+
+    close_current_window is
+    require
+	current_window /= Void
+    do
+	current_window := Void
+    end
+
+    show_hs is
+    require
+	current_window = Void
+    do
+	current_window := hs_window
+    end
+
+    newhs_ok is
+    require
+	current_window = newhs_window
+    local
+	s : STRING
+    do
+	current_window := Void
+	s := newhs_window.name_tb.string
+	current_preset.hiscore.put_name(s)
+	hs_window.update_score(current_preset)
+	io_score.from_preset_list(config.preset_list)
+	io_score.save(config.score_file)
     end
 
     options_ok is
     require
-	options_window_showing
-    local
-	s : STRING
-	i : INTEGER
+	current_window = options_window
     do
-	options_window_showing := False
-	allow_wrap := options_window.wrap_cb.value
-	s := options_window.width_tb.string
-	if s.is_integer then
-	    i := s.to_integer
-	    if i < min_width then
-		width := min_width
-	    elseif  i > max_width then
-		width := max_width
-	    else
-		width := i
-	    end
+	current_window := Void
+	options_window.update_setting
+	if current_preset /= options_window.preset then
+	    current_preset := options_window.preset
+	    use_setting(options_window.setting)
+	    new_game
+	elseif not current_setting.is_equal(options_window.setting) then
+	    use_setting(options_window.setting)
+	    new_game
 	end
-
-	--TODO: similar code
-	s := options_window.height_tb.string
-	if s.is_integer then
-	    i := s.to_integer
-	    if i < min_height then
-		height := min_height
-	    elseif  i > max_height then
-		height := max_height
-	    else
-		height := i
-	    end
-	end
-	new_game
     end
 
     new_game is
@@ -164,19 +230,21 @@ feature
 	!!board.make(1, width, 1, height)
 	generate_board
 	preprocess_board
-	reset_move_count
+	reset_score
 	scramble_board
 	update_best_image
-	reset_move_count
+	reset_score
 	game_state := state_playing
+	last_ticks := get_ticks
+	elapsed_seconds := 0
+	update_time_image
+	elapsed_ticks := 0
     end
 
     options is
     do
-	options_window_showing := True
-	options_window.wrap_cb.put_value(allow_wrap)
-	options_window.width_tb.put_string(width.to_string)
-	options_window.height_tb.put_string(height.to_string)
+	current_window := options_window
+	options_window.put_info(current_preset, current_setting)
     end
 
     state_none : INTEGER is 0
@@ -184,45 +252,85 @@ feature
     state_victory : INTEGER is 2
     state_quit : INTEGER is 3
     game_state : INTEGER
-    options_window_showing : BOOLEAN
+
+    current_window : WINDOW
 
     main_loop is
     local
 	e : EVENT
+	i : INTEGER
     do
 	from
 	until game_state = state_quit
 	loop
 	    seed := seed + 1
 	    blank_screen
+
 	    widget_list.do_all(agent {WIDGET}.update)
 	    draw_border
 	    if game_state = state_playing then
+		i := get_ticks
+		elapsed_ticks := elapsed_ticks + i - last_ticks
+		last_ticks := i
+		i := elapsed_ticks // 1000
+		if i > elapsed_seconds then
+		    elapsed_seconds := i
+		    update_time_image
+		end
+
 		draw_board
-		if check_connections then
+		check_connections
+		if is_victorious then
 		    game_state := state_victory
+		    hiscore_check
 		end
 	    end
 	    if game_state = state_victory then
 		draw_board
-		win_image.blit(50, 400)
+		win_image.blit(10, 0)
 	    end
 
-	    best_image.blit(10, 440)
-	    move_image.blit(10, 460)
+	    best_image.blit(10, 420)
+	    move_image.blit(10, 440)
+	    time_image.blit(10, 460)
 
-	    if options_window_showing then
-		options_window.update
+	    if current_window /= Void then
+		current_window.update
 	    end
 
 	    ext_update_screen
 	    e := poll_event
 	    if e /= Void then
-		if options_window_showing then
-		    options_window.process_event(e)
+		if current_window /= Void then
+		    current_window.process_event(e)
 		else
 		    handle_event(e)
 		end
+	    end
+	end
+    end
+
+    hiscore_check is
+    local
+	newhi : BOOLEAN
+	score : INTEGER
+	hiscore : SCORE
+    do
+	score := move_count - best
+	if current_preset /= Void then
+	    hiscore := current_preset.hiscore
+	    if hiscore = Void then
+		newhi := True
+	    elseif hiscore.time > elapsed_seconds then
+		newhi := True
+	    elseif hiscore.time = elapsed_seconds and then hiscore.score > score then
+		newhi := True
+	    end
+	    if newhi then
+		!!hiscore.make("Anonymous", score, elapsed_seconds)
+		current_preset.put_hiscore(hiscore)
+		current_window := newhs_window
+		newhs_window.name_tb.put_string(hiscore.name)
 	    end
 	end
     end
@@ -278,8 +386,9 @@ feature
 
     move_image : IMAGE
     best_image : IMAGE
+    time_image : IMAGE
 
-    reset_move_count is
+    reset_score is
     do
 	move_count := 0
 	move_image.free
@@ -297,6 +406,12 @@ feature
     do
 	best_image.free
 	best_image.render_string("par: " + best.to_string, mainfont, white)
+    end
+
+    update_time_image is
+    do
+	time_image.free
+	time_image.render_string("time: " + elapsed_seconds.to_string, mainfont, white)
     end
 
     rotatecw(i, j : INTEGER) is
@@ -423,7 +538,7 @@ feature
     leftpipew : INTEGER is 19
     leftpipeh : INTEGER is 6
 
-    check_connections : BOOLEAN is
+    check_connections is
     local
 	check_list : LINKED_LIST[TILE]
 	i, j : INTEGER
@@ -471,8 +586,13 @@ feature
 		dir := dir + 1
 	    end
 	end
+    end
 
-	--victory check
+    is_victorious : BOOLEAN is
+    local
+	i, j : INTEGER
+	t : TILE
+    do
 	Result := True
 	from i := 1
 	until i > width or else not Result
@@ -634,6 +754,7 @@ feature
     scramble_board is
     local
 	i, j : INTEGER
+	sym2, sym4 : BOOLEAN
     do
 	best := 0
 	from i := 1
@@ -643,26 +764,36 @@ feature
 	    until j > height
 	    loop
 		if board.item(i, j) /= server_top then
+		    sym2 := False
+		    sym4 := False
+		    if board.item(i, j) = server_bottom and then
+server_top.neighbour.item(dir_up) = server_bottom.neighbour.item(dir_down) and then
+server_bottom.neighbour.item(dir_left) = server_bottom.neighbour.item(dir_right) then
+			sym2 := True
+			if server_top.neighbour.item(dir_up) = server_bottom.neighbour.item(dir_right) then
+			    sym4 := True
+			end
+		    elseif board.item(i, j).is_symmetric then
+			sym2 := True
+		    end
+
 		    rand.next
 		    inspect rand.last_integer(4)
 		    when 1 then
 			rotateccw(i, j)
-			best := best + 1
+			if not sym4 then
+			    best := best + 1
+			end
 		    when 2 then
 			rotatecw(i, j)
-			best := best + 1
+			if not sym4 then
+			    best := best + 1
+			end
 		    when 3 then
 			rotatecw(i, j)
 			rotatecw(i, j)
-			best := best + 2
-			--don't count reflections
-			if board.item(i, j) = server_bottom and then
-server_top.neighbour.item(dir_up) = server_bottom.neighbour.item(dir_down) and then
-server_bottom.neighbour.item(dir_left) = server_bottom.neighbour.item(dir_right) then
-
-			    best := best - 2
-			elseif board.item(i, j).is_symmetric then
-			    best := best - 2
+			if not sym2 then
+			    best := best + 2
 			end
 		    else
 		    end
@@ -787,6 +918,10 @@ server_bottom.neighbour.item(dir_left) = server_bottom.neighbour.item(dir_right)
 
     ext_poll_event(em : EVENTMAKER) : EVENT is
     external "C" alias "ext_poll_event"
+    end
+
+    get_ticks : INTEGER is
+    external "C" alias "ext_get_ticks"
     end
 
     ext_update_screen is

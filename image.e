@@ -5,6 +5,16 @@ feature
     do
     end
 
+    new_dummy is
+    require
+	not is_connected
+    do
+	ptr := ext_new_dummy
+	if ptr.is_not_null then
+	    is_connected := True
+	end
+    end
+
     width : INTEGER is
     require
 	is_connected
@@ -132,6 +142,10 @@ feature {NONE}
     end
 
     ext_display_format(p : POINTER) : POINTER is
+    external "C"
+    end
+
+    ext_new_dummy : POINTER is
     external "C"
     end
 end

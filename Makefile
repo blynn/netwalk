@@ -1,4 +1,4 @@
-ALLFILES = ext_sdl.c bl*.[ch] version.h *.e Makefile LICENSE README HISTORY *.config *.se cross.ed
+ALLFILES = ext_sdl.c bl*.[ch] version.h *.e Makefile LICENSE README HISTORY config *.se cross.ed *.ttf
 
 ifdef WIN32
 CC = i586-mingw32msvc-gcc
@@ -9,7 +9,7 @@ LIBS = $(SDL_LIBS) -lSDL_ttf
 else
 CC = gcc
 CFLAGS=-O2 -Wall `sdl-config --cflags`
-EFLAGS=-boost -O2 `sdl-config --cflags`
+EFLAGS=-O2 `sdl-config --cflags`
 SDL_LIBS=`sdl-config --libs`
 LIBS = $(SDL_LIBS) -lSDL_ttf 
 endif

@@ -1,4 +1,4 @@
-class COMMAND_OPTIONS_CANCEL
+class COMMAND_CLOSE_CURRENT
 inherit COMMAND
 creation make
 feature
@@ -11,6 +11,6 @@ feature
 
     execute is
     do
-	main.options_cancel
+	main.close_current_window
     end
 end

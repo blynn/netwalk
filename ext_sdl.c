@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <assert.h>
 #include "bl_lib.h"
 #include "version.h"
 #include "eiffel.h"
@@ -13,6 +14,7 @@ void ext_fill_rect(int x, int y, int w, int h, int c)
 {
     SDL_Rect rect;
 
+    assert(screen);
     rect.x = x;
     rect.y = y;
     rect.w = w;
@@ -74,11 +76,11 @@ EIF_OBJ ext_poll_event(EIF_OBJ em)
 
     while (SDL_PollEvent(&event)) {
 	if (event.type == SDL_KEYDOWN) {
-	    return EVENTMAKER_make_keydown(em, event.key.keysym.sym, SDL_GetModState());
+	    return EVENTMAKER_make_keydown((int) em, event.key.keysym.sym, SDL_GetModState());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
-	    return EVENTMAKER_make_mbdown(em, event.button.button, SDL_GetModState(), event.button.x, event.button.y);
+	    return EVENTMAKER_make_mbdown((int) em, event.button.button, SDL_GetModState(), event.button.x, event.button.y);
 	} else if (event.type == SDL_QUIT) {
-	    return EVENTMAKER_make_quit(em);
+	    return EVENTMAKER_make_quit((int) em);
 	}
     }
     return NULL;
@@ -94,6 +96,9 @@ SDL_Surface *ext_render_text(char *s, TTF_Font *font, SDL_Color *c)
     SDL_Surface *tmp;
     SDL_Surface *res;
 
+    assert(s);
+    assert(font);
+    assert(c);
     tmp = TTF_RenderText_Solid(font, s, *c);
     res = SDL_DisplayFormat(tmp);
     SDL_FreeSurface(tmp);
@@ -127,6 +132,8 @@ void blit_img(SDL_Surface *image, int x, int y)
 {
     SDL_Rect rect;
 
+    assert(screen);
+    assert(image);
     rect.x = x;
     rect.y = y;
     SDL_BlitSurface(image, NULL, screen, &rect);
@@ -136,7 +143,7 @@ SDL_Surface *ext_display_format_alpha(SDL_Surface *img)
 {
     SDL_Surface *res;
 
-    //assert(img);
+    assert(img);
     res = SDL_DisplayFormatAlpha(img);
     SDL_FreeSurface(img);
     return res;
@@ -146,9 +153,19 @@ SDL_Surface *ext_display_format(SDL_Surface *img)
 {
     SDL_Surface *res;
 
-    //assert(img);
+    assert(img);
     res = SDL_DisplayFormat(img);
     SDL_FreeSurface(img);
+    return res;
+}
+
+SDL_Surface *ext_new_dummy()
+{
+    SDL_Surface *res;
+
+    res = SDL_CreateRGBSurface(0, 0, 0, 0, 0, 0, 0, 0);
+
+    assert(res);
     return res;
 }
 
@@ -177,4 +194,8 @@ int ext_get_tsh()
 void ext_get_text_size(TTF_Font *font, const char* text)
 {
     TTF_SizeText(font, text, &textsizewidth, &textsizeheight);
+}
+
+int ext_get_ticks() {
+    return SDL_GetTicks();
 }

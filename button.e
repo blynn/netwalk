@@ -24,7 +24,7 @@ feature
     do
 	fill_rect(0, 0, width, height, darkgreen)
 	fill_rect(1, 1, width - 2, height - 2, black)
-	if string.count > 0 then
+	if img.is_connected then
 	    blit(img, 2, 2)
 	end
     end

@@ -32,3 +32,46 @@ Sat Apr 20 17:02:23 PDT 2002
     Some Makefile fixes, changed win32.config to DOS text file.
 
     [netwalk-0.2.tgz]
+
+Mon Apr 22 18:05:29 PDT 2002
+    Added timer.
+
+    Fixed another par calculation caveat: if the server has all
+    four port connected, then rotations shouldn't count at all.
+
+Mon Apr 22 23:03:16 PDT 2002
+    Got rid of compilation warnings.
+
+    GUI code cleanup.
+
+    High score table for "standard" games (9x10).
+
+    TODO's:
+	- have buttons for presets: e.g. easy, expert, elite, evil,
+    that range from small no wrap games to the largest possible wrap game.
+    Or inane, ???, insane, inhuman.
+    Or newbie, normal, nerd, neverending/nonsense.
+	- record high scores in each category.
+	- find a GPL font.
+	- put C code in package.
+
+    Then can submit on Freshmeat?
+
+Tue Apr 23 18:47:00 PDT 2002
+    For first game, PRNG seeded with current time.
+
+Wed Apr 24 16:50:51 PDT 2002
+    Now uses GPL fonts so it'll work out of the box.
+    Fixed time bug: wasn't updating with system time.
+
+Sat Apr 27 16:00:51 PDT 2002
+    Added primitive listbox widget, can choose preset games.
+
+    High score window now displays one high score per preset.
+
+    Saves high scores to file.
+
+Tue Apr 30 02:12:40 PDT 2002
+    Added stuff to README.
+
+    [netwalk-0.3.tgz]
