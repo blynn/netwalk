@@ -1,3 +1,6 @@
+Mon Aug 16 16:25:47 PDT 2004
+    Allowed key repeating (to aid textbox editing).
+
 Fri Aug  6 13:01:45 PDT 2004
     Implemented suggestions from Denis Klykvin: now loads config file
     from $HOME/.netwalk/ and if it doesn't exist, a default one will be

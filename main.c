@@ -619,6 +619,8 @@ void init()
     atexit(TTF_Quit);
 
     SDL_WM_SetCaption("NetWalk", "NetWalk");
+
+    SDL_EnableKeyRepeat(150, 50);
 }
 
 SDL_Surface *tileimg[64];

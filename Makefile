@@ -1,4 +1,4 @@
-VERSION=0.4.5
+VERSION=0.4.6
 ALLFILES = *.[ch] Makefile LICENSE README NEWS linux/*.[ch] win32/*.[ch] helmetr.ttf
 PROJNAME = netwalk
 OS ?= linux
