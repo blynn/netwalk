@@ -17,4 +17,10 @@ feature
 	Result.put_kmod(kmod)
 	Result.put_xy(x, y)
     end
+
+    make_quit : EVENT is
+    do
+	!!Result.make
+	Result.put_type(sdl_quit)
+    end
 end

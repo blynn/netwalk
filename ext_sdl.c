@@ -77,6 +77,8 @@ EIF_OBJ ext_poll_event(EIF_OBJ em)
 	    return EVENTMAKER_make_keydown(em, event.key.keysym.sym, SDL_GetModState());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 	    return EVENTMAKER_make_mbdown(em, event.button.button, SDL_GetModState(), event.button.x, event.button.y);
+	} else if (event.type == SDL_QUIT) {
+	    return EVENTMAKER_make_quit(em);
 	}
     }
     return NULL;
@@ -113,6 +115,12 @@ void *ext_make_color(int r, int g, int b)
 int ext_convert_color(int r, int g, int b)
 {
     return SDL_MapRGB(screen->format, r, g, b);
+}
+
+void *free_img(void *image)
+{
+    SDL_FreeSurface((SDL_Surface *) image);
+    return NULL;
 }
 
 void blit_img(SDL_Surface *image, int x, int y)
@@ -153,4 +161,20 @@ void *free_ttf_font(TTF_Font *font)
 {
     TTF_CloseFont(font);
     return NULL;
+}
+
+static int textsizewidth;
+static int textsizeheight;
+int ext_get_tsw()
+{
+    return textsizewidth;
+}
+int ext_get_tsh()
+{
+    return textsizeheight;
+}
+
+void ext_get_text_size(TTF_Font *font, const char* text)
+{
+    TTF_SizeText(font, text, &textsizewidth, &textsizeheight);
 }

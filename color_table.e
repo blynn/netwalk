@@ -5,6 +5,11 @@ feature
 	!!Result.make(0, 0, 0)
     end
 
+    grey : COLOR is
+    once
+	!!Result.make(127, 127, 127)
+    end
+
     white : COLOR is
     once
 	!!Result.make(255, 255, 255)
@@ -43,6 +48,11 @@ feature
     green : COLOR is
     once
 	!!Result.make(0, 255, 0)
+    end
+
+    darkgreen : COLOR is
+    once
+	!!Result.make(0, 127, 0)
     end
 
     darkpurple : COLOR is

@@ -69,4 +69,10 @@ feature
 	type := tile_server_top
 	!!neighbour.make(1, 4)
     end
+
+    is_symmetric : BOOLEAN is
+    do
+	Result := neighbour.item(dir_up) = neighbour.item(dir_down)
+		and then neighbour.item(dir_left) = neighbour.item(dir_right)
+    end
 end

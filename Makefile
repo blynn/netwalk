@@ -41,11 +41,11 @@ dist: $(ALLFILES)
 	-rm -rf $(projname)
 
 ifdef WIN32
-windist : netwalk
+bindist : netwalk
 	-rm -rf $(projname)
 	mkdir $(projname)
 	cp -l netwalk.exe $(projname)
-	cp -l linux.config $(projname)/config
+	cp -l win32.config $(projname)/config
 	cp -l /home/ben/cross/SDL/lib/SDL.dll $(projname)
 	cp -l /home/ben/cross/SDL/lib/SDL_ttf.dll $(projname)
 	zip $(projname)-win.zip $(projname)/*

@@ -9,6 +9,14 @@ feature
     tile_terminal : INTEGER is 4
 
     board : ARRAY2[TILE]
+
+    default_width : INTEGER is 10
+    default_height : INTEGER is 9
+    min_width : INTEGER is 5
+    max_width : INTEGER is 15
+    min_height : INTEGER is 4
+    max_height : INTEGER is 13
+
     width : INTEGER
     height : INTEGER
     servertopi : INTEGER is
@@ -25,6 +33,11 @@ feature
 	Result := config.bigfont
     end
 
+    mainfont : TTF_FONT is
+    do
+	Result := config.mainfont
+    end
+
     win_image : IMAGE is
     once
 	!!Result.make
@@ -32,21 +45,117 @@ feature
     end
 
     allow_wrap : BOOLEAN
-    difficulty : INTEGER
 
     seed : INTEGER
+    move_count : INTEGER
+
+    new_game_button : BUTTON
+    options_button : BUTTON
+    quit_button : BUTTON
+
+    options_window : OPTIONS_WINDOW
+
+    widget_list : LINKED_LIST[WIDGET]
+
+    add_widget(w : WIDGET) is
+    do
+	widget_list.add_last(w)
+    end
 
     make is
+    local
+	c : COMMAND
     do
+	!!widget_list.make
+	seed := 1
 	!!rand.make
 	ext_init
 	connected_pipe_color := green
 	disconnected_pipe_color := darkred
 	connected_terminal_color := cyan
 	disconnected_terminal_color := darkpurple
-	width := 10
-	height := 9
+	width := default_width
+	height := default_height
+	!!move_image.make
+	move_image.render_string("moves: " + move_count.to_string, mainfont, white)
+	!!best_image.make
+	best_image.render_string("par: " + best.to_string, mainfont, white)
+
+	!!new_game_button.make("New Game")
+	new_game_button.put_geometry(550, 20, 80, 20)
+	!COMMAND_NEW_GAME!c.make(Current)
+	new_game_button.put_command(c, new_game_button.signal_activate)
+	add_widget(new_game_button)
+
+	!!options_button.make("Options")
+	options_button.put_geometry(550, 60, 80, 20)
+	!COMMAND_OPTIONS!c.make(Current)
+	options_button.put_command(c, options_button.signal_activate)
+	add_widget(options_button)
+
+	!!quit_button.make("Quit")
+	quit_button.put_geometry(550, 100, 80, 20)
+	!COMMAND_QUIT!c.make(Current)
+	quit_button.put_command(c, quit_button.signal_activate)
+	add_widget(quit_button)
+
+	make_options_window
+	new_game
 	main_loop
+    end
+
+    make_options_window is
+    local
+	c : COMMAND
+    do
+	!!options_window.make
+	!COMMAND_OPTIONS_OK!c.make(Current)
+	options_window.put_command(c, options_window.signal_activate)
+	!COMMAND_OPTIONS_CANCEL!c.make(Current)
+	options_window.put_command(c, options_window.signal_cancel)
+    end
+
+    options_cancel is
+    require
+	options_window_showing
+    do
+	options_window_showing := False
+    end
+
+    options_ok is
+    require
+	options_window_showing
+    local
+	s : STRING
+	i : INTEGER
+    do
+	options_window_showing := False
+	allow_wrap := options_window.wrap_cb.value
+	s := options_window.width_tb.string
+	if s.is_integer then
+	    i := s.to_integer
+	    if i < min_width then
+		width := min_width
+	    elseif  i > max_width then
+		width := max_width
+	    else
+		width := i
+	    end
+	end
+
+	--TODO: similar code
+	s := options_window.height_tb.string
+	if s.is_integer then
+	    i := s.to_integer
+	    if i < min_height then
+		height := min_height
+	    elseif  i > max_height then
+		height := max_height
+	    else
+		height := i
+	    end
+	end
+	new_game
     end
 
     new_game is
@@ -55,13 +164,19 @@ feature
 	!!board.make(1, width, 1, height)
 	generate_board
 	preprocess_board
+	reset_move_count
 	scramble_board
+	update_best_image
+	reset_move_count
 	game_state := state_playing
-	if difficulty > 0 then
-	    allow_wrap := True
-	else
-	    allow_wrap := False
-	end
+    end
+
+    options is
+    do
+	options_window_showing := True
+	options_window.wrap_cb.put_value(allow_wrap)
+	options_window.width_tb.put_string(width.to_string)
+	options_window.height_tb.put_string(height.to_string)
     end
 
     state_none : INTEGER is 0
@@ -69,6 +184,7 @@ feature
     state_victory : INTEGER is 2
     state_quit : INTEGER is 3
     game_state : INTEGER
+    options_window_showing : BOOLEAN
 
     main_loop is
     local
@@ -79,6 +195,7 @@ feature
 	loop
 	    seed := seed + 1
 	    blank_screen
+	    widget_list.do_all(agent {WIDGET}.update)
 	    draw_border
 	    if game_state = state_playing then
 		draw_board
@@ -90,12 +207,29 @@ feature
 		draw_board
 		win_image.blit(50, 400)
 	    end
+
+	    best_image.blit(10, 440)
+	    move_image.blit(10, 460)
+
+	    if options_window_showing then
+		options_window.update
+	    end
+
 	    ext_update_screen
 	    e := poll_event
 	    if e /= Void then
-		handle_event(e)
+		if options_window_showing then
+		    options_window.process_event(e)
+		else
+		    handle_event(e)
+		end
 	    end
 	end
+    end
+
+    quit is
+    do
+	game_state := state_quit
     end
     
     handle_event(e : EVENT) is
@@ -103,19 +237,14 @@ feature
 	inspect e.type
 	when sdl_keydown then
 	    inspect e.i1
-	    when sdlk_escape then
-		game_state := state_quit
-	    when sdlk_f3 then
-		difficulty := difficulty + 1
-		if difficulty > 1 then
-		    difficulty := 0
-		end
 	    when sdlk_f2 then
 		new_game
 	    else
 	    end
 	when sdl_mousebuttondown then
 	    handle_mbdown(e)
+	when sdl_quit then
+	    quit
 	else
 	end
     end
@@ -123,7 +252,17 @@ feature
     handle_mbdown(e : EVENT) is
     local
 	i, j : INTEGER
+	it : ITERATOR[WIDGET]
     do
+	it := widget_list.get_new_iterator
+	from it.start
+	until it.is_off
+	loop
+	    if it.item.contains(e.x, e.y) then
+		it.item.process_event(e)
+	    end
+	    it.next
+	end
 	if game_state = state_playing then
 	    i := e.x // cellwidth
 	    j := e.y // cellheight
@@ -137,6 +276,29 @@ feature
 	end
     end
 
+    move_image : IMAGE
+    best_image : IMAGE
+
+    reset_move_count is
+    do
+	move_count := 0
+	move_image.free
+	move_image.render_string("moves: " + move_count.to_string, mainfont, white)
+    end
+
+    tally_move is
+    do
+	move_count := move_count + 1
+	move_image.free
+	move_image.render_string("moves: " + move_count.to_string, mainfont, white)
+    end
+
+    update_best_image is
+    do
+	best_image.free
+	best_image.render_string("par: " + best.to_string, mainfont, white)
+    end
+
     rotatecw(i, j : INTEGER) is
     local
 	t : TILE
@@ -144,21 +306,24 @@ feature
 	bak : BOOLEAN
     do
 	t := board.item(i, j)
-	if t = server_top or else t = server_bottom then
-	    bak := server_top.neighbour.item(1)
-	    server_top.neighbour.put(server_bottom.neighbour.item(4), 1)
-	    server_bottom.neighbour.put(server_bottom.neighbour.item(3), 4)
-	    server_bottom.neighbour.put(server_bottom.neighbour.item(2), 3)
-	    server_bottom.neighbour.put(bak, 2)
-	elseif t /= Void then
-	    bak := t.neighbour.item(4)
-	    from dir := 4
-	    until dir = 1
-	    loop
-		t.neighbour.put(t.neighbour.item(dir - 1), dir)
-		dir := dir - 1
+	if t /= Void then
+	    if t = server_top or else t = server_bottom then
+		bak := server_top.neighbour.item(1)
+		server_top.neighbour.put(server_bottom.neighbour.item(4), 1)
+		server_bottom.neighbour.put(server_bottom.neighbour.item(3), 4)
+		server_bottom.neighbour.put(server_bottom.neighbour.item(2), 3)
+		server_bottom.neighbour.put(bak, 2)
+	    else
+		bak := t.neighbour.item(4)
+		from dir := 4
+		until dir = 1
+		loop
+		    t.neighbour.put(t.neighbour.item(dir - 1), dir)
+		    dir := dir - 1
+		end
+		t.neighbour.put(bak, dir)
 	    end
-	    t.neighbour.put(bak, dir)
+	    tally_move
 	end
     end
 
@@ -169,21 +334,24 @@ feature
 	bak : BOOLEAN
     do
 	t := board.item(i, j)
-	if t = server_top or else t = server_bottom then
-	    bak := server_top.neighbour.item(1)
-	    server_top.neighbour.put(server_bottom.neighbour.item(2), 1)
-	    server_bottom.neighbour.put(server_bottom.neighbour.item(3), 2)
-	    server_bottom.neighbour.put(server_bottom.neighbour.item(4), 3)
-	    server_bottom.neighbour.put(bak, 4)
-	elseif t /= Void then
-	    bak := t.neighbour.item(1)
-	    from dir := 1
-	    until dir = 4
-	    loop
-		t.neighbour.put(t.neighbour.item(dir + 1), dir)
-		dir := dir + 1
+	if t /= Void then
+	    if t = server_top or else t = server_bottom then
+		bak := server_top.neighbour.item(1)
+		server_top.neighbour.put(server_bottom.neighbour.item(2), 1)
+		server_bottom.neighbour.put(server_bottom.neighbour.item(3), 2)
+		server_bottom.neighbour.put(server_bottom.neighbour.item(4), 3)
+		server_bottom.neighbour.put(bak, 4)
+	    else
+		bak := t.neighbour.item(1)
+		from dir := 1
+		until dir = 4
+		loop
+		    t.neighbour.put(t.neighbour.item(dir + 1), dir)
+		    dir := dir + 1
+		end
+		t.neighbour.put(bak, dir)
 	    end
-	    t.neighbour.put(bak, dir)
+	    tally_move
 	end
     end
 
@@ -412,9 +580,9 @@ feature
 
 	    inspect tile.type
 	    when tile_server_top then
-		fill_rect(x + 5, y + 5, cellwidth - 10, cellheight - 5, blue)
+		fill_rect(x + 7, y + 7, cellwidth - 12, cellheight - 6, blue)
 	    when tile_server_bottom then
-		fill_rect(x + 5, y, cellwidth - 10, cellheight - 5, blue)
+		fill_rect(x + 7, y, cellwidth - 12, cellheight - 6, blue)
 	    when tile_terminal then
 		fill_rect(x + 8, y + 8, 16, 16, c2)
 	    else
@@ -487,6 +655,15 @@ feature
 			rotatecw(i, j)
 			rotatecw(i, j)
 			best := best + 2
+			--don't count reflections
+			if board.item(i, j) = server_bottom and then
+server_top.neighbour.item(dir_up) = server_bottom.neighbour.item(dir_down) and then
+server_bottom.neighbour.item(dir_left) = server_bottom.neighbour.item(dir_right) then
+
+			    best := best - 2
+			elseif board.item(i, j).is_symmetric then
+			    best := best - 2
+			end
 		    else
 		    end
 		end

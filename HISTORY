@@ -9,3 +9,26 @@ Thu Apr 18 17:55:26 PDT 2002
     Cleanup in preparation for release.
 
     [netwalk-0.1.tgz]
+
+Sat Apr 20 00:01:25 PDT 2002
+    Very hard to improve, because I keep playing it instead of
+    coding.
+
+    Realized my best move counter is flawed: need to ignore
+    reflections.
+
+Sat Apr 20 17:02:23 PDT 2002
+    Added "New Game" and "Options" buttons.
+
+    WIDGET's put_geometry all wrong? Container class should handle offsets
+    instead?
+
+    Added options window.
+
+    Added "Quit" button, handles SDL_QUIT event.
+
+    Can adjust height, width.
+
+    Some Makefile fixes, changed win32.config to DOS text file.
+
+    [netwalk-0.2.tgz]

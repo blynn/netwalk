@@ -297,5 +297,11 @@ feature
     sdl_mousemotion : INTEGER is 4
     sdl_mousebuttondown : INTEGER is 5
     sdl_mousebuttonup : INTEGER is 6
+    sdl_joyaxismotion : INTEGER is 7
+    sdl_joyballmotion : INTEGER is 8
+    sdl_joyhatmotion : INTEGER is 9
+    sdl_joybuttondown : INTEGER is 10
+    sdl_joybuttonup : INTEGER is 11
+    sdl_quit : INTEGER is 12
     bl_network : INTEGER is 33
 end
