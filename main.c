@@ -1,3 +1,23 @@
+/* NetWalk main program
+ * Ben Lynn
+ */
+/*
+Copyright (C) 2004 Benjamin Lynn (blynn@cs.stanford.edu)
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,15 +36,18 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
+#include "version.h"
+
+#include "widget.h"
+#include "colour.h"
+#include "game.h"
+
 char *config_file = "config";
 
-enum {
-    signal_activate = 0,
-    signal_count
-};
+static int interrupted = 0;
 
 enum {
-    vsize = 16
+    vsize = 18
 };
 
 enum {
@@ -33,7 +56,7 @@ enum {
 
 enum {
     state_game,
-    state_won,
+    state_button,
     state_quit
 };
 
@@ -47,53 +70,12 @@ enum {
 };
 
 enum {
-    boardmaxw = 20,
-    boardmaxh = 20,
     cellw = 24,
     cellh = 24,
     border = 1,
     padding = 10
 };
 
-typedef struct {
-    int x, y;
-} coord_s;
-
-coord_s dir[4] = {
-    {0, -1},
-    {1, 0},
-    {0, 1},
-    {-1, 0},
-};
-// 0 = up, 1 = right, 2 = down, 3 = left
-//    0
-//    |
-// 3--+--1
-//    |
-//    2
-
-
-enum {
-    c_background,
-    c_text,
-    c_menubg,
-    c_buttonborder,
-    c_server,
-    c_serverwon,
-    c_on,
-    c_off,
-    c_up,
-    c_down,
-    c_windowborder,
-    c_border,
-    c_borderwon,
-    c_highlight,
-    c_pulse,
-    c_max
-};
-
-SDL_Color rgbtable[c_max];
-int ctable[c_max];
 char shifttable[256];
 int show_moves_flag = 0;
 
@@ -115,6 +97,7 @@ typedef struct hsentry_s hsentry_t[1];
 hsentry_t hstable[level_max];
 char *level_name[level_max];
 
+//TODO use this somehow
 struct gameparm_s {
     int boardw, boardh;
     int wrap;
@@ -122,27 +105,15 @@ struct gameparm_s {
 typedef struct gameparm_s *gameparm_ptr;
 typedef struct gameparm_s gameparm_t[1];
 
-static SDL_Surface *screen;
+gameparm_t gp;
+
+SDL_Surface *screen;
 TTF_Font *font;
 int lastmousex, lastmousey;
 config_t config;
-gameparm_t gp;
 char *player_name;
-
-struct widget_s {
-    int x, y;
-    int w, h;
-    int localx, localy;
-    struct widget_s *parent;
-    void (*update)(struct widget_s *);
-    void (*handle_click)(struct widget_s *, int, int, int);
-    void (*computexy)(struct widget_s *);
-    //TODO: replace with hash table?
-    void (*signal_handler[signal_count])(struct widget_s *w, void *data);
-    void *data[signal_count];
-};
-typedef struct widget_s widget_t[1];
-typedef struct widget_s *widget_ptr;
+int game_won;
+int state;
 
 struct button_s {
     struct widget_s widget;
@@ -235,6 +206,7 @@ window_t enter_name_window;
 label_t l_about1;
 label_t l_about2;
 button_t b_about1;
+widget_t statusbar;
 
 label_t l_hs1;
 button_t b_hs1;
@@ -243,9 +215,6 @@ label_t l_en1;
 textbox_t tb_en1;
 button_t b_en1;
 
-int wrap_flag = 0;
-int no_fourway = 0;
-
 char *clonestr(char *s)
 {
     char *res = malloc(sizeof(char) * strlen(s) + 1);
@@ -253,140 +222,14 @@ char *clonestr(char *s)
     return res;
 }
 
-void init_rgb(int c, int r, int g, int b)
-{
-    rgbtable[c].r = r;
-    rgbtable[c].g = g;
-    rgbtable[c].b = b;
-}
-
-void init_rgbtable()
-{
-    init_rgb(c_menubg, 0, 63, 0);
-    init_rgb(c_text, 255, 255, 255);
-    init_rgb(c_background, 0, 0, 0);
-    init_rgb(c_buttonborder, 0, 127, 0);
-    init_rgb(c_server, 0, 0, 191);
-    init_rgb(c_serverwon, 0, 0, 255);
-    init_rgb(c_on, 0, 255, 0);
-    init_rgb(c_off, 127, 0, 0);
-    init_rgb(c_up, 0, 255, 255);
-    init_rgb(c_down, 127, 0, 127);
-    init_rgb(c_windowborder, 0, 255, 0);
-    init_rgb(c_pulse, 255, 255, 255);
-    init_rgb(c_borderwon, 0, 127, 127);
-    init_rgb(c_border, 0, 127, 0);
-    init_rgb(c_highlight, 0, 191, 0);
-}
-
-void init_ctable()
-{
-    int i;
-    for (i=0; i<c_max; i++) {
-	ctable[i] = SDL_MapRGB(screen->format, rgbtable[i].r, rgbtable[i].g, rgbtable[i].b);
-    }
-}
-
 SDL_Surface *font_render(char *s, int c)
 {
     return TTF_RenderText_Solid(font, s, rgbtable[c]);
 }
 
-void widget_computexy(widget_ptr wid)
+void statusbar_update(widget_ptr w)
 {
-    wid->x = wid->localx;
-    wid->y = wid->localy;
-    if (wid->parent) {
-	wid->x += wid->parent->x;
-	wid->y += wid->parent->y;
-    }
-}
-
-void widget_init(widget_ptr wid)
-{
-    int i;
-
-    wid->parent = NULL;
-    wid->update = NULL;
-    wid->handle_click = NULL;
-    for (i=0; i<signal_count; i++) {
-	wid->signal_handler[i] = NULL;
-	wid->data[i] = NULL;
-    }
-    wid->computexy = widget_computexy;
-}
-
-void widget_put_geometry(void *p, int x, int y, int w, int h)
-{
-    struct widget_s *wid = (struct widget_s *) p;
-    wid->localx = x;
-    wid->localy = y;
-    wid->w = w;
-    wid->h = h;
-}
-
-void widget_put_handler(widget_ptr p, void (* f)(widget_ptr, void *), int sig)
-{
-    p->signal_handler[sig] = f;
-}
-
-void widget_put_handler_data(widget_ptr p,
-	void (* f)(widget_ptr, void *), void *data, int sig)
-{
-    p->signal_handler[sig] = f;
-    p->data[sig] = data;
-}
-
-void widget_fill(widget_ptr w, int c)
-{
-    SDL_Rect rect;
-    rect.x = w->x;
-    rect.y = w->y;
-    rect.w = w->w;
-    rect.h = w->h;
-
-    SDL_FillRect(screen, &rect, c);
-}
-
-void widget_fillrect(widget_ptr w, SDL_Rect *rect, int c)
-{
-    SDL_Rect r;
-
-    r.x = rect->x + w->x;
-    r.y = rect->y + w->y;
-    r.w = rect->w;
-    r.h = rect->h;
-    SDL_FillRect(screen, &r, c);
-}
-
-void widget_blit(void *p, SDL_Surface *s, SDL_Rect *src, SDL_Rect *dst)
-{
-    widget_ptr wid = (widget_ptr) p;
-    dst->x += wid->x;
-    dst->y += wid->y;
-    SDL_BlitSurface(s, src, screen, dst);
-    dst->x -= wid->x;
-    dst->y -= wid->y;
-}
-
-void widget_raise_signal(widget_ptr w, int sig)
-{
-    void (*f)();
-    f = w->signal_handler[sig];
-    if (f) {
-	f(w, w->data[sig]);
-    }
-}
-
-void widget_update(void *p)
-{
-    ((widget_ptr) p)->update(p);
-}
-
-int in_widget(widget_ptr wid, int x, int y)
-{
-    return (wid->x <= x && x <= wid->x + wid->w
-		&& wid->y <= y && y <= wid->y + wid->h);
+    widget_lowered_background(w);
 }
 
 void menu_init(menu_ptr m)
@@ -398,32 +241,22 @@ void menu_init(menu_ptr m)
 void menu_update(menu_ptr m)
 {
     int i;
-    int w = 0;
     menuitem_ptr it;
     SDL_Rect rect;
 
+    widget_fill((widget_ptr) m, c_background);
     for (i=0; i<m->item_count; i++) {
 	it = m->item_list[i];
-	if (w < it->img->w) w = it->img->w;
-    }
-    w += 12;
-
-    m->widget.x = m->widget.parent->x;
-    m->widget.y = m->widget.parent->y + vsize;
-
-    m->widget.w = w;
-    m->widget.h = vsize * m->item_count + 1;
-
-    widget_fill((widget_ptr) m, ctable[c_menubg]);
-    for (i=0; i<m->item_count; i++) {
-	it = m->item_list[i];
+	if (in_widget((widget_ptr) it, lastmousex, lastmousey)) {
+	    rect.x = 2;
+	    rect.y = vsize * i;
+	    rect.w = ((widget_ptr) it)->w - 4;
+	    rect.h = vsize;
+	    widget_fillrect((widget_ptr) m, &rect, c_menubg);
+	}
 	rect.x = 8;
-	rect.y = vsize * i + 1;
+	rect.y = vsize * i + 4;
 	widget_blit((widget_ptr) m, it->img, NULL, &rect);
-	it->widget.x = 0 + m->widget.x;
-	it->widget.y = rect.y + m->widget.y;
-	it->widget.w = w;
-	it->widget.h = vsize;
     }
 }
 
@@ -462,9 +295,34 @@ void menuitem_put_text(menuitem_ptr m, char *s)
     SDL_FreeSurface(tmp);
 }
 
-void open_submenu(widget_ptr w,	void *data)
+void open_submenu(widget_ptr p,	void *data)
 {
-    openedmenu = (menuitem_ptr) w;
+    int i;
+    int w = 0;
+    menuitem_ptr it;
+
+    openedmenu = (menuitem_ptr) p;
+    menu_ptr m = openedmenu->submenu;
+
+    for (i=0; i<m->item_count; i++) {
+	it = m->item_list[i];
+	if (w < it->img->w) w = it->img->w;
+    }
+    w += 12;
+
+    m->widget.x = m->widget.parent->x;
+    m->widget.y = m->widget.parent->y + vsize;
+
+    m->widget.w = w;
+    m->widget.h = vsize * m->item_count + 1;
+
+    for (i=0; i<m->item_count; i++) {
+	it = m->item_list[i];
+	it->widget.x = 0 + m->widget.x;
+	it->widget.y = vsize * i + 4 + m->widget.y;
+	it->widget.w = w;
+	it->widget.h = vsize;
+    }
 }
 
 void menuitem_set_submenu(menuitem_ptr it, menu_ptr m)
@@ -482,13 +340,20 @@ void menubar_update(widget_ptr wid)
     menuitem_ptr it;
     int i;
 
-    widget_fill(wid, ctable[c_menubg]);
+    widget_raised_background(wid);
 
     for (i=0; i<m->item_count; i++) {
 	it = m->item_list[i];
+	if (it == openedmenu) {
+	    dst.x = it->widget.x + 2;
+	    dst.y = it->widget.y + 2;
+	    dst.w = it->widget.w - 4;
+	    dst.h = vsize - 2;
+	    widget_fillrect(wid, &dst, c_menubg);
+	}
 	if (it->img) {
 	    dst.x = it->widget.x + 5;
-	    dst.y = it->widget.y + 1;
+	    dst.y = it->widget.y + 2;
 	    widget_blit(m, it->img, NULL, &dst);
 	}
     }
@@ -536,9 +401,9 @@ void menubar_auto_layout(menubar_ptr m)
 	if (it->img) {
 	    it->widget.x = x;
 	    it->widget.y = y;
-	    it->widget.w = it->img->w;
+	    it->widget.w = it->img->w + 10;
 	    it->widget.h = it->img->h;
-	    x += it->img->w + 5;
+	    x += it->img->w + 10;
 	}
     }
 }
@@ -550,7 +415,7 @@ void label_update(widget_ptr p)
 
     if (l->img) {
 	dst.x = 0;
-	dst.y = 2;
+	dst.y = 4;
 	widget_blit(l, l->img, NULL, &dst);
     }
 }
@@ -636,12 +501,12 @@ void textbox_update(widget_ptr p)
     dst.y = 0;
     dst.w = p->w;
     dst.h = p->h;
-    widget_fillrect(p, &dst, ctable[c_text]);
+    widget_fillrect(p, &dst, c_text);
     dst.x++;
     dst.y++;
     dst.w-=2;
     dst.h-=2;
-    widget_fillrect(p, &dst, ctable[c_background]);
+    widget_fillrect(p, &dst, c_canvas);
 
     if (tb->img) {
 	dst.x = 1;
@@ -661,7 +526,7 @@ void textbox_update(widget_ptr p)
 	dst.y = 2;
 	dst.w = 1;
 	dst.h = vsize - 2;
-	widget_fillrect(p, &dst, ctable[c_text]);
+	widget_fillrect(p, &dst, c_text);
     }
 }
 
@@ -679,9 +544,12 @@ void textbox_put_text(textbox_ptr tb, char *s)
     textbox_update_img(tb);
 }
 
+static widget_ptr button_selection;
+
 void button_handle_click(widget_ptr p, int button, int x, int y)
 {
-    widget_raise_signal(p, signal_activate);
+    state = state_button;
+    button_selection = p;
 }
 
 void button_update(widget_ptr p)
@@ -689,12 +557,12 @@ void button_update(widget_ptr p)
     SDL_Rect dst;
     label_ptr l = (label_ptr) p;
 
-    widget_fill(p, ctable[c_buttonborder]);
-    dst.x = 1;
-    dst.y = 1;
-    dst.w = p->w - 2;
-    dst.h = p->h - 2;
-    widget_fillrect(p, &dst, 0);
+    if (state == state_button && button_selection == p
+	    && in_widget(p, lastmousex, lastmousey)) {
+	widget_lowered_background(p);
+    } else {
+	widget_raised_background(p);
+    }
     if (l->img) {
 	dst.x = 5;
 	dst.y = 2;
@@ -729,7 +597,7 @@ void set_video(int w, int h)
     flags = SDL_DOUBLEBUF;
 
     screen = SDL_SetVideoMode(w, h, 0, flags);
-    init_ctable();
+    init_ctable(screen->format);
     
     if (!screen) {
 	fprintf(stderr, "Can't set video mode: %s\n", SDL_GetError());
@@ -739,9 +607,17 @@ void set_video(int w, int h)
     //SDL_ShowCursor(SDL_DISABLE);
 }
 
+void set_interrupted(int i)
+{
+    interrupted = 1;
+}
+
 void init()
 {
     int status;
+
+    signal(SIGINT, set_interrupted);
+    signal(SIGTERM, set_interrupted);
 
     //if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
@@ -756,22 +632,10 @@ void init()
     }
     atexit(TTF_Quit);
 
-    signal(SIGINT, exit);
-    signal(SIGTERM, exit);
-
     SDL_WM_SetCaption("NetWalk", "NetWalk");
 }
 
 SDL_Surface *tileimg[64];
-int boardw = 10, boardh = 9;
-int board[boardmaxw][boardmaxh];
-int neighbourcount[boardmaxw][boardmaxh];
-//tile = integer
-//bits 0...3 specify which directions lead out
-//bit 4 = connected
-//bit 5 = server
-int sourcex, sourceytop, sourceybottom;
-int state;
 int level = level_medium;
 int tick;
 int tick_old;
@@ -779,7 +643,6 @@ int pipey, pipex;
 int pipew, pipeh;
 int pipet = 4;
 int move_count;
-int par;
 int ms_count;
 int second_count;
 
@@ -793,19 +656,6 @@ void draw_tile(widget_ptr wid, int i, int j)
 
     index = board[i][j] - 1;
     widget_blit(wid, tileimg[index], NULL, &rect);
-}
-
-void add_dir(int *x, int *y, int x1, int y1, int d)
-{
-    *x = x1 + dir[d].x;
-    *y = y1 + dir[d].y;
-
-    if (wrap_flag) {
-	if (*x < 0) *x = boardw - 1;
-	if (*x >= boardw) *x = 0;
-	if (*y < 0) *y = boardh - 1;
-	if (*y >= boardh) *y = 0;
-    }
 }
 
 typedef struct {
@@ -894,7 +744,7 @@ void animate_pulse(widget_ptr wid)
 	    rect.y = y * (cellh + border) + border + padding;
 	    rect.y += dir[d].y * (cellh + border) * dt / speed;
 	    rect.y += pipey - 1;
-	    widget_fillrect(wid, &rect, ctable[c_pulse]);
+	    widget_fillrect(wid, &rect, c_pulse);
 	    i++;
 	}
     }
@@ -913,8 +763,8 @@ void arena_update(widget_ptr wid)
     rect.w = cellw * boardw + (boardw + 1) * border;
     rect.h = border;
 
-    if (state == state_won) bc = ctable[c_borderwon];
-    else bc = ctable[c_border];
+    if (game_won) bc = c_borderwon;
+    else bc = c_border;
 
     for (i=0; i<=boardh; i++) {
 	widget_fillrect(wid, &rect, bc);
@@ -938,7 +788,7 @@ void arena_update(widget_ptr wid)
 	    rect.y = (cellh + border) * j + padding;
 	    rect.w = cellw + 2 * border;
 	    rect.h = cellh + 2 * border;
-	    widget_fillrect(wid, &rect, ctable[c_highlight]);
+	    widget_fillrect(wid, &rect, c_highlight);
 	}
     }
 
@@ -951,8 +801,8 @@ void arena_update(widget_ptr wid)
 	}
     }
     //draw server
-    if (state == state_won) c = ctable[c_serverwon];
-    else c = ctable[c_server];
+    if (game_won) c = c_serverwon;
+    else c = c_server;
 
     rect.x = padding + border + (cellw + border) * sourcex;
     rect.y = padding + border + (cellh + border) * sourceytop;
@@ -967,154 +817,9 @@ void arena_update(widget_ptr wid)
     widget_fillrect(wid, &rect, c);
 
     //victory animation
-    if (state == state_won) {
+    if (game_won) {
 	animate_pulse(wid);
     }
-}
-
-void generate_maze()
-{
-    coord_s opentile[boardmaxw * boardmaxh];
-    int n;
-    int i, j;
-    int x, y;
-    int x1, y1;
-
-    n = 2;
-    opentile[0].x = sourcex;
-    opentile[1].x = sourcex;
-    opentile[0].y = sourceytop;
-    opentile[1].y = sourceybottom;
-
-    for (i=0; i<boardw; i++) {
-	for (j=0; j<boardh; j++) {
-	    board[i][j] = 0;
-	    neighbourcount[i][j] = 0;
-	}
-    }
-    board[sourcex][sourceytop] = 32;
-    board[sourcex][sourceybottom] = 32;
-
-    while (n) {
-	int flag;
-
-	i = rand() % n;
-	x = opentile[i].x;
-	y = opentile[i].y;
-
-	//check if surrounded
-	flag = 1;
-
-	//special case for top of server
-	if (x == sourcex && y == sourceytop) {
-	    if (!board[x][y-1]) {
-		flag = 0;
-	    }
-	    //don't need special case for bottom of server
-	    //top is blocked by top server
-	} else {
-	    for (j=0; j<4; j++) {
-		add_dir(&x1, &y1, x, y, j);
-		if (x1 < 0 || x1 >= boardw
-			|| y1 < 0 || y1 >= boardh) {
-		    continue;
-		}
-
-		if (!board[x1][y1]) {
-		    flag = 0;
-		    break;
-		}
-	    }
-	}
-	
-	//if so, remove from list
-	if (flag) {
-	    n--;
-	    memmove(&opentile[i], &opentile[i+1], sizeof(coord_s) * (n - i));
-	    continue;
-	}
-
-	j = rand() % 4;
-
-	//not allowed left or right from top of server
-	if (x == sourcex && y == sourceytop) {
-	    if (j % 2) continue;
-	}
-
-	add_dir(&x1, &y1, x, y, j);
-
-	if (x1 < 0 || x1 >= boardw
-		|| y1 < 0 || y1 >= boardh) continue;
-	if (board[x1][y1]) continue;
-	if (no_fourway && neighbourcount[x][y] >= 3) continue;
-	neighbourcount[x][y]++;
-	neighbourcount[x1][y1]++;
-
-	board[x][y] |= (1 << j);
-	board[x1][y1] |= (1 << ((j + 2) % 4));
-
-	opentile[n].x = x1;
-	opentile[n].y = y1;
-	n++;
-    }
-}
-
-int rotatecw(int d, int n)
-{
-    int i;
-    int d1;
-
-    d1 = d;
-    for (i=0; i<n; i++) {
-	d1 = (d1 << 1);
-	if (d1 >= 16) d1 -= 15;
-    }
-    return d1;
-}
-
-void scramble()
-{
-    int i, j;
-    int d, d1;
-
-    par = 0;
-
-    //handle server by temporarily merging the two blocks into one
-
-    board[sourcex][sourceybottom] |= board[sourcex][sourceytop] & 1;
-
-    for (i=0; i<boardw; i++) {
-	for (j=0; j<boardh; j++) {
-	    if (i == sourcex && j == sourceytop) continue;
-	    if (board[i][j]) {
-		d = board[i][j] & 15;
-		switch (rand() % 4) {
-		    case 1:
-			d1 = rotatecw(d, 1);
-			if (d != d1) par++;
-			break;
-		    case 2:
-			d1 = rotatecw(d, 2);
-			if (d != d1) par+=2;
-			break;
-		    case 3:
-			d1 = rotatecw(d, 3);
-			if (d != d1) par++;
-			break;
-		    default:
-			d1 = d;
-			break;
-		}
-
-		board[i][j] &= ~15;
-		board[i][j] += d1;
-	    }
-	}
-    }
-
-    board[sourcex][sourceytop] &= ~1;
-    board[sourcex][sourceytop] |= board[sourcex][sourceybottom] & 1;
-    board[sourcex][sourceybottom] &= ~1;
 }
 
 char* read_field(FILE *fp)
@@ -1246,66 +951,6 @@ void check_hs()
     }
 }
 
-void check_live()
-{
-    coord_s opentile[boardmaxw * boardmaxh];
-    int n;
-    int i, j;
-    int x, y;
-    int x1, y1;
-    int tilecount = 0;
-    int livecount;
-
-    n = 2;
-    opentile[0].x = sourcex;
-    opentile[1].x = sourcex;
-    opentile[0].y = sourceytop;
-    opentile[1].y = sourceybottom;
-
-    for (i=0; i<boardw; i++) {
-	for (j=0; j<boardh; j++) {
-	    if (board[i][j]) tilecount++;
-	    board[i][j] &= ~16;
-	}
-    }
-    board[sourcex][sourceytop] |= 16;
-    board[sourcex][sourceybottom] |= 16;
-    livecount = 2;
-
-    while (n) {
-	n--;
-	x = opentile[n].x;
-	y = opentile[n].y;
-
-	for (j=0; j<4; j++) {
-	    if (board[x][y] & (1 << j)) {
-		add_dir(&x1, &y1, x, y, j);
-		if (x1 < 0 || x1 >= boardw
-			|| y1 < 0 || y1 >= boardh) {
-		    continue;
-		}
-
-		i = board[x1][y1];
-		if (i & (1 << ((j + 2) % 4))) {
-		    if (!(i & 16)) {
-			board[x1][y1] |= 16;
-			livecount++;
-			opentile[n].x = x1;
-			opentile[n].y = y1;
-			n++;
-		    }
-		}
-	    }
-	}
-    }
-    if (livecount == tilecount) {
-	state = state_won;
-	pulse_count = 0;
-
-	check_hs();
-    }
-}
-
 void init_tileimg()
 {
     int i, j;
@@ -1422,14 +1067,15 @@ void resize()
 
     w = cellw * boardw + (boardw + 1) * border + 2 * padding;
     h = cellh * boardh + (boardh + 1) * border + 2 * padding;
-    widget_put_geometry(arena, 0, 2 * vsize, w, h);
+    widget_put_geometry(arena, 0, vsize, w, h);
     set_video(w, h + 2 * vsize);
     widget_put_geometry(root, 0, 0, w, h + 2 * vsize);
     widget_put_geometry(menu, 0, 0, w, vsize);
     menubar_auto_layout(menu);
+    widget_put_geometry(statusbar, 0, h + vsize, w, vsize);
 
-    widget_put_geometry(l_moves, 8, vsize, 64, vsize);
-    widget_put_geometry(l_time, w - 48, vsize, 64, vsize);
+    widget_put_geometry(l_moves, 8, h + vsize, 64, vsize);
+    widget_put_geometry(l_time, w - 48, h + vsize, 64, vsize);
 
     widget_put_geometry((widget_ptr) about_window,
 	    w/2 - 50, h/2 - 50, 100, 100);
@@ -1453,10 +1099,10 @@ void resize()
     }
 
     widget_put_geometry((widget_ptr) enter_name_window,
-	    10, h/2 - 60, w - 20, 50);
+	    10, h/2 - 30, w - 20, 67);
     widget_put_geometry((widget_ptr) l_en1, 10, 0, 60, vsize);
-    widget_put_geometry((widget_ptr) tb_en1, 5, vsize, w - 30, vsize);
-    widget_put_geometry((widget_ptr) b_en1, w - 60, 35, 30, vsize);
+    widget_put_geometry((widget_ptr) tb_en1, 5, vsize + 5, w - 30, vsize);
+    widget_put_geometry((widget_ptr) b_en1, w - 60, 45, 30, vsize);
 
     ((widget_ptr) root)->computexy((widget_ptr) root);
     ((widget_ptr) about_window)->computexy((widget_ptr) about_window);
@@ -1491,7 +1137,6 @@ void new_game()
 	    break;
     }
     resize();
-    state = state_game;
     srand(time(NULL));
     generate_maze();
     scramble();
@@ -1501,6 +1146,35 @@ void new_game()
     ms_count = 0;
     tick = SDL_GetTicks();
     second_count = 0;
+}
+
+void handle_mousebuttonup(SDL_Event *event)
+{
+    int x = event->button.x;
+    int y = event->button.y;
+    if (openedmenu) {
+	int i;
+	menuitem_ptr it;
+	menu_ptr m;
+
+	m = openedmenu->submenu;
+	for (i=0; i<m->item_count; i++) {
+	    it = m->item_list[i];
+	    if (in_widget((widget_ptr) it, x, y)) {
+		widget_raise_signal((widget_ptr) it, signal_activate);
+		break;
+	    }
+	}
+	openedmenu = NULL;
+
+	return;
+    } else if (state == state_button) {
+	state = state_game;
+	if (in_widget(button_selection, x, y)) {
+	    widget_raise_signal(button_selection, signal_activate);
+	    return;
+	}
+    }
 }
 
 void handle_click(int button, int x, int y)
@@ -1515,24 +1189,6 @@ void handle_click(int button, int x, int y)
 	return;
     }
 
-    if (openedmenu) {
-	int i;
-	menuitem_ptr it;
-	menu_ptr m;
-
-	m = openedmenu->submenu;
-	for (i=0; i<m->item_count; i++) {
-	    it = m->item_list[i];
-	    if (in_widget((widget_ptr) it, lastmousex, lastmousey)) {
-		widget_raise_signal((widget_ptr) it, signal_activate);
-		break;
-	    }
-	}
-	openedmenu = NULL;
-
-	return;
-    }
-
     wid = (widget_ptr) root;
     wid->handle_click(wid, button, x, y);
 }
@@ -1542,11 +1198,13 @@ void arena_handle_click(widget_ptr p, int button, int x, int y)
     int i, j;
     int d;
 
+    if (state != state_game) return;
+
     i = (x - padding - border) / (cellw + border);
     j = (y - padding - border) / (cellh + border);
     if (i >= boardw || j >= boardh) return;
 
-    if (state == state_won) {
+    if (game_won) {
 	if (i == sourcex && (j == sourceytop || j == sourceybottom)) {
 	    new_pulse(sourcex, sourceybottom, -1);
 	    new_pulse(sourcex, sourceytop, -1);
@@ -1555,8 +1213,6 @@ void arena_handle_click(widget_ptr p, int button, int x, int y)
 	}
 	return;
     }
-
-    if (state != state_game) return;
 
     //temporarily merge server squares
     board[sourcex][sourceybottom] |= board[sourcex][sourceytop] & 1;
@@ -1582,6 +1238,11 @@ void arena_handle_click(widget_ptr p, int button, int x, int y)
     board[sourcex][sourceybottom] &= ~1;
 
     check_live();
+    if (game_won) {
+	pulse_count = 0;
+
+	check_hs();
+    }
 }
 
 void quit()
@@ -1687,7 +1348,7 @@ void update_screen()
 	for (i=0; i<menu->item_count; i++) {
 	    it = menu->item_list[i];
 	    if (in_widget((widget_ptr) it, lastmousex, lastmousey)) {
-		openedmenu = it;
+		open_submenu((widget_ptr) it, NULL);
 	    }
 	}
 	menu_update(openedmenu->submenu);
@@ -1710,8 +1371,8 @@ void window_update(widget_ptr p)
 	dst.y = -1;
 	dst.w = p->w + 2;
 	dst.h = p->h + 2;
-	widget_fillrect(p, &dst, ctable[c_windowborder]);
-	widget_fill(p, 0);
+	widget_fillrect(p, &dst, c_windowborder);
+	widget_fill(p, c_background);
     }
 
     for (i=0; i<w->widget_count; i++) {
@@ -1970,6 +1631,22 @@ int main(int argc, char *argv[])
 	window_add_widget(root, arena);
     }
 
+    //status bar: mainly for showing the time
+    {
+	widget_init((widget_ptr) statusbar);
+	statusbar->update = statusbar_update;
+	window_add_widget(root, statusbar);
+
+	//setup moves and time
+	label_init(l_moves);
+	if (show_moves_flag) {
+	    window_add_widget(root, l_moves);
+	}
+
+	label_init(l_time);
+	window_add_widget(root, l_time);
+    }
+
     //setup the menus
     {
 	menuitem_t it1, it2;
@@ -2022,23 +1699,12 @@ int main(int argc, char *argv[])
 	menuitem_set_submenu(it2, m2);
     }
 
-    //setup moves and time
-    {
-	label_init(l_moves);
-	if (show_moves_flag) {
-	    window_add_widget(root, l_moves);
-	}
-
-	label_init(l_time);
-	window_add_widget(root, l_time);
-    }
-
     //setup about box
     {
 	window_init(about_window);
 
 	label_init(l_about1);
-	label_put_text(l_about1, "NetWalk 0.4");
+	label_put_text(l_about1, "NetWalk " VERSION_STRING);
 	window_add_widget(about_window, l_about1);
 
 	label_init(l_about2);
@@ -2083,10 +1749,10 @@ int main(int argc, char *argv[])
     init_tileimg();
     new_game();
 
-    while (state != state_quit) {
+    while (state != state_quit && !interrupted) {
 	tick_old = tick;
 	tick = SDL_GetTicks();
-	if (state != state_won) {
+	if (!game_won) {
 	    update_time();
 	}
 	SDL_GetMouseState(&lastmousex, &lastmousey);
@@ -2097,6 +1763,9 @@ int main(int argc, char *argv[])
 		    break;
 		case SDL_MOUSEBUTTONDOWN:
 		    handle_click(event.button.button, event.button.x, event.button.y);
+		    break;
+		case SDL_MOUSEBUTTONUP:
+		    handle_mousebuttonup(&event);
 		    break;
 		case SDL_QUIT:
 		    quit();

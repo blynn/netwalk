@@ -1,3 +1,4 @@
+VERSION=0.4.4
 ALLFILES = *.[ch] Makefile LICENSE README NEWS config helmetr.ttf
 PROJNAME = netwalk
 ifdef WIN32
@@ -12,13 +13,21 @@ CFLAGS=-Wall -O2 -fomit-frame-pointer `sdl-config --cflags`
 SDL_LIBS=`sdl-config --libs`
 LIBS = $(SDL_LIBS) -lSDL_ttf 
 endif
-$(PROJNAME) : main.c
+
+.PHONY: target clean dist
+
+target : version.h $(PROJNAME)
+
+version.h : ./Makefile
+	echo '#define VERSION_STRING "'$(VERSION)'"' > version.h
+
+$(PROJNAME) : main.c game.c colour.c widget.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-VERSION=0.4.3
 DISTNAME=$(PROJNAME)-$(VERSION)
 
 dist: $(ALLFILES)
+	-rm version.h
 	-rm -rf $(DISTNAME)
 	mkdir $(DISTNAME)
 	cp -rl --parents $(ALLFILES) $(DISTNAME)
@@ -40,4 +49,4 @@ bindist : $(PROJNAME)
 endif
 
 clean :
-	-rm $(PROJNAME) *.o
+	-rm $(PROJNAME) *.o version.h

@@ -1,3 +1,19 @@
+Tue Jun 22 23:13:04 PDT 2004
+    Interface is better: shading of widgets, current menu item is highlighted,
+    menu item is activated on mouse button up, rather than a second click.
+    Split program into a few files.
+
+    Menu drawing code was inefficient.
+
+    Bugfix in in_widget().
+
+    Rearranged "Enter name" window.
+
+    Makefile generates version.h.
+
+    Added comments to beginning of all source files.
+    [netwalk-0.4.4.tgz]
+
 Sat Jun 19 19:36:02 PDT 2004
     Added highlight to cell that mouse is over.
     [netwalk-0.4.3.tgz]
