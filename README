@@ -1,10 +1,7 @@
-README for NetWalk v0.3.2
+README for NetWalk v0.4
 Ben Lynn
 
 INTRODUCTION
-
-I tried a shareware Windows game called NetWalk once. I liked the idea so
-I decided to implement my own so I could play in Linux, and customize it more.
 
 NetWalk is a puzzle game where the object is to connect every terminal to the
 main server. (These are represented by coloured boxes, so I guess you could
@@ -12,8 +9,6 @@ also imagine them to be water mains, electricity cables, phone lines, etc.)
 
 In this version, not only must every terminal be connected, but every piece of
 cable must also be connected to the main server somehow.
-
-This project is written in SmallEiffel.
 
 USAGE
 
@@ -28,11 +23,7 @@ Edit the "config" file to configure the game and add presets.
 
 COMPILATION
 
-If you have SmallEiffel installed, you can use the Makefile to compile
-Netwalk.
-
-I have also included the C code output by SmallEiffel. To compile Netwalk from
-this, run the "netwalk.make" script. SmallEiffel is not required.
+Type "make" to compile the project.
 
 LICENSE
 

@@ -1,0 +1,45 @@
+Thu Jan  9 19:39:21 PST 2003
+    Forgot to remove one hardcoded colour (0xffffff for the pulse colour).
+
+Wed Jan  8 23:50:44 PST 2003
+    Added "showmoves" configuration option.
+
+Mon Jan  6 11:36:14 PST 2003
+    Added high scores. Code is very crufty now, will cleanup after release.
+
+Mon Jan  6 13:18:52 PST 2003
+    Handles SDL_Quit event, doesn't try to initialize audio.
+
+Sun Jan  2 22:23:14 PST 2003
+    Added no_fourway option.
+
+Wed Jan  1 00:19:28 PST 2003
+    More kludges: widget->localx and localy store relative coordinates,
+    call widget->computexy() to compute screen coordinates. Submenu items
+    locations are computed on the fly.
+
+    Added menu items to change difficulty level, resizes window automatically.
+
+Mon Dec 30 11:40:27 PST 2002
+    Displays elapsed time.
+
+Wed Dec 25 10:35:55 PST 2002
+    Cleaned up colour code. (Eliminated many SDL_MapRGB()'s)
+
+Sun Nov 17 13:16:31 PST 2002
+    GUI pretty boring. I pick at it every now and then.
+    Got around to implementing wrap.
+
+Fri Nov  8 17:39:28 PST 2002
+    Confused about implementing menus. Code is terrible, but it works.
+
+Fri Nov  8 10:07:35 PST 2002
+    Started GUI. Doing OOP in C.
+
+Thu Nov  7 10:56:02 PST 2002
+    Added animation when you win.
+
+Thu Nov  7 00:15:07 PST 2002
+    Restarted project in C. I'm in an anti-OOP phase.
+    Playable, but missing a few features from my Eiffel version, notably
+    the GUI.

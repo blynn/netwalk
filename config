@@ -1,28 +1,4 @@
-# NetWalk configuration
-
-# Fonts
-main_font helmetr.ttf
-big_font chevarar.ttf
-#
-# Alternative fonts
-#
-# Windows:
-#main_font C:\WINDOWS\Fonts\Arial.ttf
-#big_font C:\WINDOWS\Fonts\Impact.ttf
-#
-# Linux:
-#main_font /usr/share/fonts/truetype/Arial.ttf
-#big_font /usr/share/fonts/truetype/Impact.ttf
-
-# high scores file
-hiscores hiscores
-
-# presets
-default_preset Normal
-
-begin preset
-    Newbie 6 5 0
-    Normal 10 9 0
-    Nerd 10 9 1
-    Nonsense 15 13 1
-end
+font helmetr.ttf
+fontsize 11
+hiscores hiscores.txt
+showmoves 0
