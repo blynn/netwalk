@@ -285,6 +285,11 @@ void init_ctable()
     }
 }
 
+SDL_Surface *font_render(char *s, int c)
+{
+    return TTF_RenderText_Solid(font, s, rgbtable[c]);
+}
+
 void widget_computexy(widget_ptr wid)
 {
     wid->x = wid->localx;
@@ -450,8 +455,7 @@ void menuitem_put_text(menuitem_ptr m, char *s)
 
     m->text = s;
     if (m->img) SDL_FreeSurface(m->img);
-    m->text = s;
-    tmp = TTF_RenderText_Solid(font, s, rgbtable[c_text]);
+    tmp = font_render(s, c_text);
     m->img = SDL_DisplayFormat(tmp);
     SDL_FreeSurface(tmp);
 }
@@ -563,9 +567,8 @@ void label_put_text(label_ptr l, char *s)
 
     if (l->img) SDL_FreeSurface(l->img);
     if (l->text) free(l->text);
-    l->text = malloc(sizeof(s) + 1);
-    strcpy(l->text, s);
-    tmp = TTF_RenderText_Solid(font, s, rgbtable[c_text]);
+    l->text = clonestr(s);
+    tmp = font_render(s, c_text);
     l->img = SDL_DisplayFormat(tmp);
     SDL_FreeSurface(tmp);
 }
@@ -575,7 +578,7 @@ void textbox_update_img(textbox_ptr tb)
     SDL_Surface *tmp;
 
     if (tb->img) SDL_FreeSurface(tb->img);
-    tmp = TTF_RenderText_Solid(font, tb->text, rgbtable[c_text]);
+    tmp = font_render(tb->text, c_text);
     if (tmp) {
 	tb->img = SDL_DisplayFormat(tmp);
 	SDL_FreeSurface(tmp);
@@ -712,9 +715,8 @@ void button_put_text(button_ptr b, char *s)
 
     if (b->img) SDL_FreeSurface(b->img);
     if (b->text) free(b->text);
-    b->text = malloc(sizeof(s) + 1);
-    strcpy(b->text, s);
-    tmp = TTF_RenderText_Solid(font, s, rgbtable[c_text]);
+    b->text = clonestr(s);
+    tmp = font_render(s, c_text);
     b->img = SDL_DisplayFormat(tmp);
     SDL_FreeSurface(tmp);
 }
@@ -747,8 +749,8 @@ void init()
     atexit(SDL_Quit);
     status = TTF_Init();
     if (status) {
-	    fprintf(stderr, "init_glue: TTF_Init failed: %s\n", SDL_GetError());
-	    exit(-1);
+	fprintf(stderr, "Can't init SDL_ttf\n");
+	exit(-1);
     }
     atexit(TTF_Quit);
 
@@ -1922,6 +1924,24 @@ int main(int argc, char *argv[])
     //need to set video mode here to initialize colour table
     set_video(100, 100);
 
+    //setup enter name box
+    {
+	window_init(enter_name_window);
+
+	label_init(l_en1);
+	label_put_text(l_en1, "Enter name:");
+	window_add_widget(enter_name_window, l_en1);
+
+	textbox_init(tb_en1);
+	textbox_put_text(tb_en1, "Anonymous");
+	window_add_widget(enter_name_window, tb_en1);
+
+	button_init(b_en1);
+	button_put_text(b_en1, "Ok");
+	window_add_widget(enter_name_window, b_en1);
+	widget_put_handler((widget_ptr) b_en1, enter_name_close, signal_activate);
+    }
+
     //setup the "arena": where the action is
     {
 	widget_init((widget_ptr) arena);
@@ -2034,24 +2054,6 @@ int main(int argc, char *argv[])
 	    label_init(hsw[i]->time);
 	    window_add_widget(hs_window, hsw[i]->time);
 	}
-    }
-
-    //setup enter name box
-    {
-	window_init(enter_name_window);
-
-	label_init(l_en1);
-	label_put_text(l_en1, "Enter name:");
-	window_add_widget(enter_name_window, l_en1);
-
-	textbox_init(tb_en1);
-	textbox_put_text(tb_en1, "Anonymous");
-	window_add_widget(enter_name_window, tb_en1);
-
-	button_init(b_en1);
-	button_put_text(b_en1, "Ok");
-	window_add_widget(enter_name_window, b_en1);
-	widget_put_handler((widget_ptr) b_en1, enter_name_close, signal_activate);
     }
 
     resize();

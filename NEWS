@@ -1,3 +1,12 @@
+Mon Mar 17 15:19:50 PST 2003
+    Just realized it crashes on my XP laptop.
+    After some code cleanup, the bug mysteriously disappeared.
+    [netwalk-0.4.1.tgz]
+
+Wed Jan 15 11:03:01 PST 2003
+    Released first C version.
+    [netwalk-0.4.tgz]
+
 Thu Jan  9 19:39:21 PST 2003
     Forgot to remove one hardcoded colour (0xffffff for the pulse colour).
 
