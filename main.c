@@ -87,6 +87,7 @@ enum {
     c_windowborder,
     c_border,
     c_borderwon,
+    c_highlight,
     c_pulse,
     c_max
 };
@@ -275,6 +276,7 @@ void init_rgbtable()
     init_rgb(c_pulse, 255, 255, 255);
     init_rgb(c_borderwon, 0, 127, 127);
     init_rgb(c_border, 0, 127, 0);
+    init_rgb(c_highlight, 0, 191, 0);
 }
 
 void init_ctable()
@@ -905,6 +907,7 @@ void arena_update(widget_ptr wid)
     int bc;
     int c;
 
+    //draw grid
     rect.x = padding;
     rect.y = padding;
     rect.w = cellw * boardw + (boardw + 1) * border;
@@ -926,6 +929,20 @@ void arena_update(widget_ptr wid)
 	rect.x += cellw + border;
     }
 
+    //highlight cursor
+    if (lastmousex > wid->x && lastmousey > wid->y) {
+	i = (lastmousex - padding - border - wid->x) / (cellw + border);
+	j = (lastmousey - padding - border - wid->y) / (cellh + border);
+	if (i < boardw && j < boardh) {
+	    rect.x = (cellw + border) * i + padding;
+	    rect.y = (cellh + border) * j + padding;
+	    rect.w = cellw + 2 * border;
+	    rect.h = cellh + 2 * border;
+	    widget_fillrect(wid, &rect, ctable[c_highlight]);
+	}
+    }
+
+    //draw in tiles
     for (i=0; i<boardw; i++) {
 	for (j=0; j<boardh; j++) {
 	    if (board[i][j]) {
@@ -949,6 +966,7 @@ void arena_update(widget_ptr wid)
     rect.y = padding + border + (cellh + border) * sourceybottom;
     widget_fillrect(wid, &rect, c);
 
+    //victory animation
     if (state == state_won) {
 	animate_pulse(wid);
     }
