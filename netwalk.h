@@ -1749,6 +1749,9 @@ void r16handle_mbdown(se_dump_stack*caller,T16* C,T0* a1);
 T2 r16maybe_wrapy(se_dump_stack*caller,T16* C,T2 a1);
 void r16draw_tile(se_dump_stack*caller,T16* C,T0* a1);
 T6 r16is_victorious(se_dump_stack*caller,T16* C);
+/* Extra external prototype for line 944 of ./netwalk.e:*/
+void SDL_Delay(T2 a1);
+void r16ext_delay(se_dump_stack*caller,T2 a1);
 void r16blank_screen(se_dump_stack*caller,T16* C);
 void r16add_widget(se_dump_stack*caller,T16* C,T0* a1,T2 a2,T2 a3);
 void r16show_hs(se_dump_stack*caller,T16* C);
@@ -1764,17 +1767,17 @@ T2 r16servertopj(se_dump_stack*caller,T16* C);
 void r16make(se_dump_stack*caller,T16* C);
 void r16fill_rect(se_dump_stack*caller,T16* C,T2 a1,T2 a2,T2 a3,T2 a4,T0* a5);
 void r16rotatecw(se_dump_stack*caller,T16* C,T2 a1,T2 a2);
-/* Extra external prototype for line 916 of ./netwalk.e:*/
+/* Extra external prototype for line 917 of ./netwalk.e:*/
 void ext_init(void);
 void r16ext_init(se_dump_stack*caller);
-/* Extra external prototype for line 920 of ./netwalk.e:*/
+/* Extra external prototype for line 921 of ./netwalk.e:*/
 void* ext_poll_event(int a1);
 T0* r16ext_poll_event(se_dump_stack*caller,int a1);
 T6 r16standard_is_equal(se_dump_stack*caller,T16* C,T0* a1);
-/* Extra external prototype for line 924 of ./netwalk.e:*/
+/* Extra external prototype for line 925 of ./netwalk.e:*/
 T2 ext_get_ticks(void);
 T2 r16get_ticks(se_dump_stack*caller);
-/* Extra external prototype for line 715 of ./netwalk.e:*/
+/* Extra external prototype for line 716 of ./netwalk.e:*/
 void ext_fill_rect(T2 a1,T2 a2,T2 a3,T2 a4,T2 a5);
 void r16ext_fill_rect(se_dump_stack*caller,T2 a1,T2 a2,T2 a3,T2 a4,T2 a5);
 void r16place_tile(se_dump_stack*caller,T16* C,T0* a1,T2 a2,T2 a3);
@@ -1785,7 +1788,7 @@ T0* r16green(se_dump_stack*caller);
 T2 r16height(se_dump_stack*caller,T16* C);
 T0* r16get_neighbour(se_dump_stack*caller,T16* C,T0* a1,T2 a2);
 void r16quit(se_dump_stack*caller,T16* C);
-/* Extra external prototype for line 928 of ./netwalk.e:*/
+/* Extra external prototype for line 929 of ./netwalk.e:*/
 void ext_update_screen(void);
 void r16ext_update_screen(se_dump_stack*caller);
 void r16rotateccw(se_dump_stack*caller,T16* C,T2 a1,T2 a2);

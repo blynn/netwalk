@@ -307,6 +307,7 @@ feature
 		    handle_event(e)
 		end
 	    end
+	    ext_delay(20) --idle for 20ms
 	end
     end
 
@@ -937,5 +938,9 @@ server_bottom.neighbour.item(dir_left) = server_bottom.neighbour.item(dir_right)
     blank_screen is
     do
 	fill_rect(0, 0, 640, 480, black)
+    end
+
+    ext_delay(ms : INTEGER) is
+    external "C" alias "SDL_Delay"
     end
 end

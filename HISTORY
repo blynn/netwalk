@@ -82,3 +82,8 @@ Mon Jun  3 15:21:17 PDT 2002
     Added minor version number.
 
     [netwalk-0.3.1.tgz]
+
+Wed Jun  5 23:07:17 PDT 2002
+    Idles for 20ms in inner loop (after reading comment at Linux Game Tome).
+
+    [netwalk-0.3.2.tgz]
