@@ -1,0 +1,157 @@
+133 "NATIVE_ARRAY[DICTIONARY_NODE[SCORE,STRING]]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T133 reference: no 
+150 "ITERATOR[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator.e" class-name: ITERATOR parent-count: 0 c-type: T150 reference: yes ref-status: dead running-count: 1 running: 151 
+136 "COMMAND_SHOW_HS" class-path: "./command_show_hs.e" class-name: COMMAND_SHOW_HS parent-count: 1 parents: 25 c-type: T136 reference: yes ref-status: live id-field: yes running-count: 1 running: 136 
+132 "DICTIONARY_NODE[SCORE,STRING]" class-path: "/home/ben/SmallEiffel/lib/base/dictionary_node.e" class-name: DICTIONARY_NODE parent-count: 0 c-type: T132 reference: yes ref-status: live id-field: yes running-count: 1 running: 132 
+4 "REAL" 
+116 "COMMAND_NEWHS_OK" class-path: "./command_newhs_ok.e" class-name: COMMAND_NEWHS_OK parent-count: 1 parents: 25 c-type: T116 reference: yes ref-status: live id-field: yes running-count: 1 running: 116 
+58 "STD_OUTPUT" class-path: "/home/ben/SmallEiffel/lib/io/std_output.e" class-name: STD_OUTPUT parent-count: 1 parents: 59 
+66 "LINKED_LIST[PRESET]" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 c-type: T66 reference: yes ref-status: live id-field: yes running-count: 1 running: 66 
+106 "LINK[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 c-type: T106 reference: yes ref-status: live id-field: yes running-count: 1 running: 106 
+91 "TUPLE[WIDGET]" class-path: "TUPLE" class-name: TUPLE parent-count: 0 c-type: T91 reference: yes ref-status: dead running-count: 0 
+146 "TEXT_FILE_WRITE" class-path: "/home/ben/SmallEiffel/lib/io/text_file_write.e" class-name: TEXT_FILE_WRITE parent-count: 1 parents: 59 c-type: T146 reference: yes ref-status: live id-field: yes running-count: 1 running: 146 
+18 "COLOR_TABLE" class-path: "./color_table.e" class-name: COLOR_TABLE parent-count: 0 
+63 "ARRAYED_COLLECTION" class-path: "/home/ben/SmallEiffel/lib/base/arrayed_collection.e" class-name: ARRAYED_COLLECTION parent-count: 1 parents: 36 
+144 "COLLECTION[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T144 reference: yes ref-status: dead running-count: 1 running: 105 
+85 "NATIVE_ARRAY[INTEGER]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T85 reference: no 
+81 "ARRAYED_COLLECTION[BOOLEAN]" class-path: "/home/ben/SmallEiffel/lib/base/arrayed_collection.e" class-name: ARRAYED_COLLECTION parent-count: 1 parents: 36 c-type: T81 reference: yes ref-status: dead running-count: 1 running: 80 
+138 "COMMAND_NEW_GAME" class-path: "./command_new_game.e" class-name: COMMAND_NEW_GAME parent-count: 1 parents: 25 c-type: T138 reference: yes ref-status: live id-field: yes running-count: 1 running: 138 
+86 "LINKED_LIST[TILE]" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 c-type: T86 reference: yes ref-status: live id-field: yes running-count: 1 running: 86 
+40 "ITERATOR_ON_LINKED_LIST" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator_on_linked_list.e" class-name: ITERATOR_ON_LINKED_LIST parent-count: 1 parents: 31 
+61 "CHARACTER_REF" class-path: "/home/ben/SmallEiffel/lib/kernel/character_ref.e" class-name: CHARACTER_REF parent-count: 2 parents: 24 23 c-type: T61 reference: yes ref-status: dead running-count: 0 
+125 "COMMAND_OPTIONS_OK" class-path: "./command_options_ok.e" class-name: COMMAND_OPTIONS_OK parent-count: 1 parents: 25 c-type: T125 reference: yes ref-status: live id-field: yes running-count: 1 running: 125 
+16 "NETWALK" class-path: "./netwalk.e" class-name: NETWALK parent-count: 4 parents: 20 19 18 17 c-type: T16 reference: yes ref-status: live id-field: yes running-count: 1 running: 16 
+79 "GEN_RAND" class-path: "/home/ben/SmallEiffel/lib/random/gen_rand.e" class-name: GEN_RAND parent-count: 0 
+64 "ARRAY[STRING]" class-path: "/home/ben/SmallEiffel/lib/kernel/array.e" class-name: ARRAY parent-count: 1 parents: 63 c-type: T64 reference: yes ref-status: live id-field: yes running-count: 1 running: 64 
+74 "TILE" class-path: "./tile.e" class-name: TILE parent-count: 1 parents: 20 c-type: T74 reference: yes ref-status: live id-field: yes running-count: 1 running: 74 
+22 "TIME" class-path: "/home/ben/SmallEiffel/lib/time/time.e" class-name: TIME parent-count: 2 parents: 24 23 c-type: T22 reference: no 
+115 "PROCEDURE[NEWHS_WINDOW,TUPLE[WIDGET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T115 reference: yes ref-status: live id-field: yes running-count: 1 running: 115 
+143 "COLLECTION[TILE]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T143 reference: yes ref-status: dead running-count: 1 running: 86 
+100 "LINKED_COLLECTION[PRESET]" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 c-type: T100 reference: yes ref-status: dead running-count: 1 running: 66 
+56 "INPUT_STREAM" class-path: "/home/ben/SmallEiffel/lib/io/input_stream.e" class-name: INPUT_STREAM parent-count: 0 
+137 "COMMAND_OPTIONS" class-path: "./command_options.e" class-name: COMMAND_OPTIONS parent-count: 1 parents: 25 c-type: T137 reference: yes ref-status: live id-field: yes running-count: 1 running: 137 
+147 "TUPLE[SCORE,STRING]" class-path: "TUPLE" class-name: TUPLE parent-count: 0 c-type: T147 reference: yes ref-status: dead running-count: 0 
+59 "OUTPUT_STREAM" class-path: "/home/ben/SmallEiffel/lib/io/output_stream.e" class-name: OUTPUT_STREAM parent-count: 0 
+5 "DOUBLE" class-path: "/home/ben/SmallEiffel/lib/kernel/double.e" class-name: DOUBLE parent-count: 1 parents: 141 c-type: T5 reference: no 
+2 "INTEGER" class-path: "/home/ben/SmallEiffel/lib/kernel/integer.e" class-name: INTEGER parent-count: 1 parents: 26 c-type: T2 reference: no 
+14 "GUI_GC" 
+67 "LINK[PRESET]" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 c-type: T67 reference: yes ref-status: live id-field: yes running-count: 1 running: 67 
+112 "COMMAND_CLOSE_CURRENT" class-path: "./command_close_current.e" class-name: COMMAND_CLOSE_CURRENT parent-count: 1 parents: 25 c-type: T112 reference: yes ref-status: live id-field: yes running-count: 1 running: 112 
+28 "EVENT" class-path: "./event.e" class-name: EVENT parent-count: 0 c-type: T28 reference: yes ref-status: live id-field: yes running-count: 1 running: 28 
+21 "PLATFORM" class-path: "/home/ben/SmallEiffel/lib/kernel/platform.e" class-name: PLATFORM parent-count: 1 parents: 1 
+131 "DICTIONARY[SCORE,STRING]" class-path: "/home/ben/SmallEiffel/lib/base/dictionary.e" class-name: DICTIONARY parent-count: 1 parents: 38 c-type: T131 reference: yes ref-status: live id-field: yes running-count: 1 running: 131 
+19 "SDL_CONSTANT" class-path: "./sdl_constant.e" class-name: SDL_CONSTANT parent-count: 0 
+38 "SAFE_EQUAL" class-path: "/home/ben/SmallEiffel/lib/kernel/safe_equal.e" class-name: SAFE_EQUAL parent-count: 0 
+104 "SCORE_DISPLAY" class-path: "./score_display.e" class-name: SCORE_DISPLAY parent-count: 0 c-type: T104 reference: yes ref-status: live id-field: yes running-count: 1 running: 104 
+155 "SAFE_EQUAL[TILE]" class-path: "/home/ben/SmallEiffel/lib/kernel/safe_equal.e" class-name: SAFE_EQUAL parent-count: 0 c-type: T155 reference: no 
+78 "MIN_STAND" class-path: "/home/ben/SmallEiffel/lib/random/min_stand.e" class-name: MIN_STAND parent-count: 1 parents: 79 
+109 "PROCEDURE[HS_WINDOW,TUPLE[PRESET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T109 reference: yes ref-status: live id-field: yes running-count: 1 running: 109 
+134 "PROCEDURE[IO_SCORE,TUPLE[PRESET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T134 reference: yes ref-status: live id-field: yes running-count: 1 running: 134 
+145 "COLLECTION[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T145 reference: yes ref-status: dead running-count: 1 running: 39 
+148 "ROUTINE[ANY,TUPLE[SCORE,STRING]]" class-path: "ROUTINE" class-name: ROUTINE parent-count: 0 c-type: T148 reference: yes ref-status: dead running-count: 1 running: 149 
+95 "PROCEDURE[WIDGET,TUPLE[WIDGET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T95 reference: yes ref-status: live id-field: yes running-count: 4 running: 124 115 111 95 
+152 "SAFE_EQUAL[STRING]" class-path: "/home/ben/SmallEiffel/lib/kernel/safe_equal.e" class-name: SAFE_EQUAL parent-count: 0 c-type: T152 reference: no 
+98 "TEXTBOX" class-path: "./textbox.e" class-name: TEXTBOX parent-count: 1 parents: 30 c-type: T98 reference: yes ref-status: live id-field: yes running-count: 1 running: 98 
+142 "cecil.se" 
+71 "ARRAYED_COLLECTION[STRING]" class-path: "/home/ben/SmallEiffel/lib/base/arrayed_collection.e" class-name: ARRAYED_COLLECTION parent-count: 1 parents: 36 c-type: T71 reference: yes ref-status: dead running-count: 1 running: 64 
+9 "NATIVE_ARRAY[CHARACTER]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T9 reference: no 
+37 "TUPLE" class-path: "TUPLE" class-name: TUPLE parent-count: 0 c-type: T37 reference: yes ref-status: dead running-count: 1 running: 102 
+93 "ROUTINE[ANY,TUPLE[WIDGET]]" class-path: "ROUTINE" class-name: ROUTINE parent-count: 0 c-type: T93 reference: yes ref-status: dead running-count: 4 running: 124 115 111 95 
+62 "ARRAY" class-path: "/home/ben/SmallEiffel/lib/kernel/array.e" class-name: ARRAY parent-count: 1 parents: 63 
+127 "COMMAND_CUSTOM_CHANGE" class-path: "./command_custom_change.e" class-name: COMMAND_CUSTOM_CHANGE parent-count: 1 parents: 25 c-type: T127 reference: yes ref-status: live id-field: yes running-count: 1 running: 127 
+27 "NUMERIC" class-path: "/home/ben/SmallEiffel/lib/kernel/numeric.e" class-name: NUMERIC parent-count: 1 parents: 24 
+39 "LINKED_LIST[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 c-type: T39 reference: yes ref-status: live id-field: yes running-count: 1 running: 39 
+7 "STRING" class-path: "/home/ben/SmallEiffel/lib/kernel/string.e" class-name: STRING parent-count: 2 parents: 24 23 c-type: T7 reference: yes ref-status: live id-field: yes running-count: 1 running: 7 
+96 "SCORE" class-path: "./score.e" class-name: SCORE parent-count: 0 c-type: T96 reference: yes ref-status: live id-field: yes running-count: 1 running: 96 
+46 "DICTIONARY_NODE" class-path: "/home/ben/SmallEiffel/lib/base/dictionary_node.e" class-name: DICTIONARY_NODE parent-count: 0 
+15 "GUI_PIXMAP" 
+45 "DICTIONARY[COMMAND,INTEGER]" class-path: "/home/ben/SmallEiffel/lib/base/dictionary.e" class-name: DICTIONARY parent-count: 1 parents: 38 c-type: T45 reference: yes ref-status: live id-field: yes running-count: 1 running: 45 
+84 "ARRAYED_COLLECTION[INTEGER]" class-path: "/home/ben/SmallEiffel/lib/base/arrayed_collection.e" class-name: ARRAYED_COLLECTION parent-count: 1 parents: 36 c-type: T84 reference: yes ref-status: dead running-count: 1 running: 83 
+70 "COLLECTION[STRING]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T70 reference: yes ref-status: dead running-count: 2 running: 118 64 
+12 "GUI_EVENT" 
+153 "ARRAY[CHARACTER]" class-path: "/home/ben/SmallEiffel/lib/kernel/array.e" class-name: ARRAY parent-count: 1 parents: 63 c-type: T153 reference: yes ref-status: live id-field: yes running-count: 1 running: 153 
+129 "COMMAND_CANCEL" class-path: "./command_cancel.e" class-name: COMMAND_CANCEL parent-count: 1 parents: 25 c-type: T129 reference: yes ref-status: live id-field: yes running-count: 1 running: 129 
+68 "SETTING" class-path: "./setting.e" class-name: SETTING parent-count: 1 parents: 10 c-type: T68 reference: yes ref-status: live id-field: yes running-count: 1 running: 68 
+105 "LINKED_LIST[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 c-type: T105 reference: yes ref-status: live id-field: yes running-count: 1 running: 105 
+128 "COMMAND_PRESET_CHANGE" class-path: "./command_preset_change.e" class-name: COMMAND_PRESET_CHANGE parent-count: 1 parents: 25 c-type: T128 reference: yes ref-status: live id-field: yes running-count: 1 running: 128 
+65 "PRESET" class-path: "./preset.e" class-name: PRESET parent-count: 0 c-type: T65 reference: yes ref-status: live id-field: yes running-count: 1 running: 65 
+32 "ITERATOR[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator.e" class-name: ITERATOR parent-count: 0 c-type: T32 reference: yes ref-status: dead running-count: 1 running: 41 
+69 "NATIVE_ARRAY[STRING]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T69 reference: no 
+55 "TEXT_FILE_READ" class-path: "/home/ben/SmallEiffel/lib/io/text_file_read.e" class-name: TEXT_FILE_READ parent-count: 1 parents: 56 c-type: T55 reference: yes ref-status: live id-field: yes running-count: 1 running: 55 
+35 "LINKED_COLLECTION" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 
+113 "BUTTON" class-path: "./button.e" class-name: BUTTON parent-count: 1 parents: 30 c-type: T113 reference: yes ref-status: live id-field: yes running-count: 1 running: 113 
+118 "LINKED_LIST[STRING]" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 c-type: T118 reference: yes ref-status: live id-field: yes running-count: 1 running: 118 
+140 "MEMO[INTEGER]" class-path: "/home/ben/SmallEiffel/lib/base/memo.e" class-name: MEMO parent-count: 0 c-type: T140 reference: yes ref-status: live id-field: yes running-count: 1 running: 140 
+80 "ARRAY[BOOLEAN]" class-path: "/home/ben/SmallEiffel/lib/kernel/array.e" class-name: ARRAY parent-count: 1 parents: 63 c-type: T80 reference: yes ref-status: live id-field: yes running-count: 1 running: 80 
+94 "PROCEDURE" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 
+33 "BOOLEAN_REF" class-path: "/home/ben/SmallEiffel/lib/kernel/boolean_ref.e" class-name: BOOLEAN_REF parent-count: 1 parents: 10 c-type: T33 reference: yes ref-status: dead running-count: 0 
+99 "HS_WINDOW" class-path: "./hs_window.e" class-name: HS_WINDOW parent-count: 1 parents: 29 c-type: T99 reference: yes ref-status: live id-field: yes running-count: 1 running: 99 
+97 "NEWHS_WINDOW" class-path: "./newhs_window.e" class-name: NEWHS_WINDOW parent-count: 1 parents: 29 c-type: T97 reference: yes ref-status: live id-field: yes running-count: 1 running: 97 
+44 "DICTIONARY" class-path: "/home/ben/SmallEiffel/lib/base/dictionary.e" class-name: DICTIONARY parent-count: 1 parents: 38 
+88 "LINKED_COLLECTION[TILE]" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 c-type: T88 reference: yes ref-status: dead running-count: 1 running: 86 
+51 "COLOR" class-path: "./color.e" class-name: COLOR parent-count: 0 c-type: T51 reference: yes ref-status: live id-field: yes running-count: 1 running: 51 
+77 "STD_RAND" class-path: "/home/ben/SmallEiffel/lib/random/std_rand.e" class-name: STD_RAND parent-count: 2 parents: 78 78 c-type: T77 reference: yes ref-status: live id-field: yes running-count: 1 running: 77 
+151 "ITERATOR_ON_LINKED_LIST[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator_on_linked_list.e" class-name: ITERATOR_ON_LINKED_LIST parent-count: 1 parents: 31 c-type: T151 reference: yes ref-status: live id-field: yes running-count: 1 running: 151 
+48 "NATIVE_ARRAY" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 
+122 "ITERATOR_ON_LINKED_LIST[PRESET]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator_on_linked_list.e" class-name: ITERATOR_ON_LINKED_LIST parent-count: 1 parents: 31 c-type: T122 reference: yes ref-status: live id-field: yes running-count: 1 running: 122 
+30 "WIDGET" class-path: "./widget.e" class-name: WIDGET parent-count: 3 parents: 19 18 17 c-type: T30 reference: yes ref-status: dead running-count: 8 running: 126 120 117 113 107 99 98 97 
+50 "IMAGE" class-path: "./image.e" class-name: IMAGE parent-count: 0 c-type: T50 reference: yes ref-status: live id-field: yes running-count: 1 running: 50 
+53 "TTF_FONT" class-path: "./ttf_font.e" class-name: TTF_FONT parent-count: 0 c-type: T53 reference: yes ref-status: live id-field: yes running-count: 1 running: 53 
+25 "COMMAND" class-path: "./command.e" class-name: COMMAND parent-count: 0 c-type: T25 reference: yes ref-status: dead running-count: 11 running: 138 137 136 135 129 128 127 125 116 114 112 
+149 "PROCEDURE[IO_SCORE,TUPLE[SCORE,STRING]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T149 reference: yes ref-status: live id-field: yes running-count: 1 running: 149 
+72 "ARRAY2" class-path: "/home/ben/SmallEiffel/lib/base/array2.e" class-name: ARRAY2 parent-count: 1 parents: 73 
+76 "NATIVE_ARRAY[TILE]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T76 reference: no 
+60 "STD_INPUT" class-path: "/home/ben/SmallEiffel/lib/io/std_input.e" class-name: STD_INPUT parent-count: 1 parents: 56 
+10 "ANY" class-path: "/home/ben/SmallEiffel/lib/kernel/any.e" class-name: ANY parent-count: 1 parents: 21 c-type: T10 reference: yes ref-status: dead running-count: 59 running: 153 151 146 28 140 77 138 137 136 135 131 130 132 129 120 128 126 127 117 125 118 122 121 98 97 116 39 113 114 99 112 47 105 45 107 104 43 106 96 50 83 75 86 80 74 87 66 55 57 41 54 53 51 65 68 7 67 64 16 
+31 "ITERATOR" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator.e" class-name: ITERATOR parent-count: 0 
+123 "LINKED_COLLECTION[STRING]" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 c-type: T123 reference: yes ref-status: dead running-count: 1 running: 118 
+52 "POINTER_REF" class-path: "/home/ben/SmallEiffel/lib/kernel/pointer_ref.e" class-name: POINTER_REF parent-count: 1 parents: 24 c-type: T52 reference: yes ref-status: dead running-count: 0 
+92 "ROUTINE" class-path: "ROUTINE" class-name: ROUTINE parent-count: 0 
+120 "LISTBOX" class-path: "./listbox.e" class-name: LISTBOX parent-count: 1 parents: 30 c-type: T120 reference: yes ref-status: live id-field: yes running-count: 1 running: 120 
+124 "PROCEDURE[OPTIONS_WINDOW,TUPLE[WIDGET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T124 reference: yes ref-status: live id-field: yes running-count: 1 running: 124 
+121 "LINK[STRING]" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 c-type: T121 reference: yes ref-status: live id-field: yes running-count: 1 running: 121 
+107 "LABEL" class-path: "./label.e" class-name: LABEL parent-count: 1 parents: 30 c-type: T107 reference: yes ref-status: live id-field: yes running-count: 1 running: 107 
+102 "TUPLE[PRESET]" class-path: "TUPLE" class-name: TUPLE parent-count: 0 c-type: T102 reference: yes ref-status: live id-field: yes running-count: 1 running: 102 
+156 "COLLECTION[CHARACTER]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T156 reference: yes ref-status: dead running-count: 1 running: 153 
+108 "HASH_TABLE_SIZE" class-path: "/home/ben/SmallEiffel/lib/base/hash_table_size.e" class-name: HASH_TABLE_SIZE parent-count: 0 c-type: T108 reference: no 
+54 "CONFIG_DATA" class-path: "./config_data.e" class-name: CONFIG_DATA parent-count: 0 c-type: T54 reference: yes ref-status: live id-field: yes running-count: 1 running: 54 
+111 "PROCEDURE[HS_WINDOW,TUPLE[WIDGET]]" class-path: "PROCEDURE" class-name: PROCEDURE parent-count: 0 c-type: T111 reference: yes ref-status: live id-field: yes running-count: 1 running: 111 
+89 "EVENTMAKER" class-path: "./eventmaker.e" class-name: EVENTMAKER parent-count: 1 parents: 19 c-type: T89 reference: no 
+119 "ITERATOR[PRESET]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator.e" class-name: ITERATOR parent-count: 0 c-type: T119 reference: yes ref-status: dead running-count: 1 running: 122 
+1 "GENERAL" class-path: "/home/ben/SmallEiffel/lib/kernel/general.e" class-name: GENERAL parent-count: 0 
+26 "INTEGER_REF" class-path: "/home/ben/SmallEiffel/lib/kernel/integer_ref.e" class-name: INTEGER_REF parent-count: 2 parents: 27 23 c-type: T26 reference: yes ref-status: dead running-count: 0 
+49 "NATIVE_ARRAY[DICTIONARY_NODE[COMMAND,INTEGER]]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T49 reference: no 
+126 "CHECKBOX" class-path: "./checkbox.e" class-name: CHECKBOX parent-count: 1 parents: 30 c-type: T126 reference: yes ref-status: live id-field: yes running-count: 1 running: 126 
+82 "NATIVE_ARRAY[BOOLEAN]" class-path: "/home/ben/SmallEiffel/lib/kernel/native_array.e" class-name: NATIVE_ARRAY parent-count: 1 parents: 38 c-type: T82 reference: no 
+11 "GUI_COLOR" 
+117 "OPTIONS_WINDOW" class-path: "./options_window.e" class-name: OPTIONS_WINDOW parent-count: 1 parents: 29 c-type: T117 reference: yes ref-status: live id-field: yes running-count: 1 running: 117 
+103 "ROUTINE[ANY,TUPLE[PRESET]]" class-path: "ROUTINE" class-name: ROUTINE parent-count: 0 c-type: T103 reference: yes ref-status: dead running-count: 2 running: 134 109 
+23 "COMPARABLE" class-path: "/home/ben/SmallEiffel/lib/kernel/comparable.e" class-name: COMPARABLE parent-count: 1 parents: 10 
+154 "ARRAYED_COLLECTION[CHARACTER]" class-path: "/home/ben/SmallEiffel/lib/base/arrayed_collection.e" class-name: ARRAYED_COLLECTION parent-count: 1 parents: 36 c-type: T154 reference: yes ref-status: dead running-count: 1 running: 153 
+42 "LINK" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 
+3 "CHARACTER" class-path: "/home/ben/SmallEiffel/lib/kernel/character.e" class-name: CHARACTER parent-count: 1 parents: 61 c-type: T3 reference: no 
+110 "LINKED_COLLECTION[SCORE_DISPLAY]" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 c-type: T110 reference: yes ref-status: dead running-count: 1 running: 105 
+34 "LINKED_LIST" class-path: "/home/ben/SmallEiffel/lib/base/linked_list.e" class-name: LINKED_LIST parent-count: 1 parents: 35 
+139 "MEMO" class-path: "/home/ben/SmallEiffel/lib/base/memo.e" class-name: MEMO parent-count: 0 
+83 "ARRAY[INTEGER]" class-path: "/home/ben/SmallEiffel/lib/kernel/array.e" class-name: ARRAY parent-count: 1 parents: 63 c-type: T83 reference: yes ref-status: live id-field: yes running-count: 1 running: 83 
+87 "LINK[TILE]" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 c-type: T87 reference: yes ref-status: live id-field: yes running-count: 1 running: 87 
+90 "LINKED_COLLECTION[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/base/linked_collection.e" class-name: LINKED_COLLECTION parent-count: 1 parents: 36 c-type: T90 reference: yes ref-status: dead running-count: 1 running: 39 
+20 "DIR_CONSTANT" class-path: "./dir_constant.e" class-name: DIR_CONSTANT parent-count: 0 
+13 "GUI_FONT" 
+43 "LINK[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/base/link.e" class-name: LINK parent-count: 0 c-type: T43 reference: yes ref-status: live id-field: yes running-count: 1 running: 43 
+41 "ITERATOR_ON_LINKED_LIST[WIDGET]" class-path: "/home/ben/SmallEiffel/lib/iterator/iterator_on_linked_list.e" class-name: ITERATOR_ON_LINKED_LIST parent-count: 1 parents: 31 c-type: T41 reference: yes ref-status: live id-field: yes running-count: 1 running: 41 
+17 "CONFIG" class-path: "./config.e" class-name: CONFIG parent-count: 0 
+24 "HASHABLE" class-path: "/home/ben/SmallEiffel/lib/kernel/hashable.e" class-name: HASHABLE parent-count: 0 
+6 "BOOLEAN" class-path: "/home/ben/SmallEiffel/lib/kernel/boolean.e" class-name: BOOLEAN parent-count: 1 parents: 33 c-type: T6 reference: no 
+75 "ARRAY2[TILE]" class-path: "/home/ben/SmallEiffel/lib/base/array2.e" class-name: ARRAY2 parent-count: 1 parents: 73 c-type: T75 reference: yes ref-status: live id-field: yes running-count: 1 running: 75 
+47 "DICTIONARY_NODE[COMMAND,INTEGER]" class-path: "/home/ben/SmallEiffel/lib/base/dictionary_node.e" class-name: DICTIONARY_NODE parent-count: 0 c-type: T47 reference: yes ref-status: live id-field: yes running-count: 1 running: 47 
+130 "IO_SCORE" class-path: "./io_score.e" class-name: IO_SCORE parent-count: 0 c-type: T130 reference: yes ref-status: live id-field: yes running-count: 1 running: 130 
+101 "COLLECTION[PRESET]" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 c-type: T101 reference: yes ref-status: dead running-count: 1 running: 66 
+141 "DOUBLE_REF" class-path: "/home/ben/SmallEiffel/lib/kernel/double_ref.e" class-name: DOUBLE_REF parent-count: 3 parents: 24 27 23 c-type: T141 reference: yes ref-status: dead running-count: 0 
+0 "NONE" 
+8 "POINTER" class-path: "/home/ben/SmallEiffel/lib/kernel/pointer.e" class-name: POINTER parent-count: 1 parents: 52 c-type: T8 reference: no 
+73 "COLLECTION2" class-path: "/home/ben/SmallEiffel/lib/base/collection2.e" class-name: COLLECTION2 parent-count: 1 parents: 38 
+135 "COMMAND_QUIT" class-path: "./command_quit.e" class-name: COMMAND_QUIT parent-count: 1 parents: 25 c-type: T135 reference: yes ref-status: live id-field: yes running-count: 1 running: 135 
+114 "COMMAND_ACTIVATE" class-path: "./command_activate.e" class-name: COMMAND_ACTIVATE parent-count: 1 parents: 25 c-type: T114 reference: yes ref-status: live id-field: yes running-count: 1 running: 114 
+36 "COLLECTION" class-path: "/home/ben/SmallEiffel/lib/kernel/collection.e" class-name: COLLECTION parent-count: 1 parents: 38 
+29 "WINDOW" class-path: "./window.e" class-name: WINDOW parent-count: 1 parents: 30 c-type: T29 reference: yes ref-status: dead running-count: 3 running: 117 99 97 
+57 "STD_INPUT_OUTPUT" class-path: "/home/ben/SmallEiffel/lib/io/std_input_output.e" class-name: STD_INPUT_OUTPUT parent-count: 2 parents: 60 58 c-type: T57 reference: yes ref-status: live id-field: yes running-count: 1 running: 57 

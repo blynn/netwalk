@@ -1,4 +1,6 @@
-ALLFILES = ext_sdl.c bl*.[ch] version.h *.e Makefile LICENSE README HISTORY config *.se cross.ed *.ttf
+NOSE_FILES= netwalk.[ch] netwalk.id netwalk.make eiffel.h
+ALLFILES = ext_sdl.c bl*.[ch] version.h *.e Makefile LICENSE README HISTORY config *.se cross.ed *.ttf $(NOSE_FILES)
+NOSE_SDL_LIBS=\`sdl-config --libs\`
 
 ifdef WIN32
 CC = i586-mingw32msvc-gcc
@@ -29,11 +31,16 @@ endif
 
 clean :
 	-rm netwalk *.o
+	-rm netwalk.[ch] netwalk.id netwalk.make
 	clean netwalk
 
 projname := $(shell awk '/NETWALK_VERSION/ { print $$3 }' version.h )
 
-dist: $(ALLFILES)
+#nose = No SmallEiffel
+nose:
+	compile_to_c -no_split -cecil cecil.se $(EFLAGS) -o netwalk netwalk ext_sdl.c bl_lib.c $(NOSE_SDL_LIBS) -lSDL_ttf
+
+dist: nose $(ALLFILES)
 	-rm -rf $(projname)
 	mkdir $(projname)
 	cp -rl --parents $(ALLFILES) $(projname)
@@ -45,7 +52,7 @@ bindist : netwalk
 	-rm -rf $(projname)
 	mkdir $(projname)
 	cp -l netwalk.exe $(projname)
-	cp -l win32.config $(projname)/config
+	cp -l config $(projname)
 	cp -l /home/ben/cross/SDL/lib/SDL.dll $(projname)
 	cp -l /home/ben/cross/SDL/lib/SDL_ttf.dll $(projname)
 	zip $(projname)-win.zip $(projname)/*

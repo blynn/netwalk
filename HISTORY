@@ -75,3 +75,10 @@ Tue Apr 30 02:12:40 PDT 2002
     Added stuff to README.
 
     [netwalk-0.3.tgz]
+
+Mon Jun  3 15:21:17 PDT 2002
+    Finally added C code for people without SmallEiffel.
+
+    Added minor version number.
+
+    [netwalk-0.3.1.tgz]
