@@ -66,6 +66,8 @@ enum {
     level_medium,
     level_hard,
     level_veryhard,
+    level_giant,
+    level_absurd,
     level_max,
     level_custom
 };
@@ -623,7 +625,8 @@ void init()
     SDL_EnableKeyRepeat(150, 50);
 }
 
-SDL_Surface *tileimg[64];
+SDL_Surface *unmarked_tileimg[64];
+SDL_Surface *marked_tileimg[64];
 int level = level_medium;
 int tick;
 int tick_old;
@@ -642,8 +645,12 @@ void draw_tile(widget_ptr wid, int i, int j)
     rect.x = padding + border + i * (cellw + border);
     rect.y = padding + border + j * (cellh + border);
 
+    int const marked = flags[i][j] & 0x1;
     index = board[i][j] - 1;
-    widget_blit(wid, tileimg[index], NULL, &rect);
+    widget_blit(wid,
+	(marked?marked_tileimg:unmarked_tileimg)[index],
+	NULL,
+	&rect);
 }
 
 typedef struct {
@@ -738,6 +745,57 @@ void animate_pulse(widget_ptr wid)
     }
 }
 
+/** \brief Determine which cell of the arena the mouse is currently
+ * pointing at, if any.
+ * \param wid The arena widget.
+ * \param mousex The mouse X position.
+ * \param mousey The mouse Y position.
+ * \param[out] col_p Returns the current cell's column in the arena.
+ * \param[out] row_p Returns the current cell's row in the arena.
+ * \retval 0 The mouse is over the arena and the cell index is returned
+ * through \a row_p and \a col_p.
+ * \retval -1 The mouse is not over the area.
+ */
+
+int get_cell_from_mouse_position(widget_ptr const wid,
+	int const mousex,int const mousey,
+	unsigned int * const col_p,unsigned int * const row_p)
+{
+	if((mousex < wid->x) || (mousey < wid->y))
+		return -1;
+
+	unsigned int const col =
+		(mousex - padding - border - wid->x) / (cellw + border);
+	unsigned int const row =
+		(mousey - padding - border - wid->y) / (cellh + border);
+
+	if((col >= boardw) || (row >= boardh))
+		return -1;
+
+	*col_p = col;
+	*row_p = row;
+	return 0;
+}
+
+/** \brief Fill a cell (including border) in the arena with a color.
+ * \param wid The arena widget.
+ * \param col The column of the cell to be filled.
+ * \param row The row of the cell to be filled.
+ * \param coloridx The index of the color to use when filling.
+ */
+
+void fill_arena_cell(widget_ptr const wid,
+	unsigned int const col,unsigned int const row,int const coloridx)
+{
+	SDL_Rect rect = {
+		.x = (cellw + border) * col + padding,
+		.y = (cellh + border) * row + padding,
+		.w = cellw + 2 * border,
+		.h = cellh + 2 * border
+	};
+	widget_fillrect(wid, &rect, coloridx);
+}
+
 void arena_update(widget_ptr wid)
 {
     int i, j;
@@ -768,15 +826,32 @@ void arena_update(widget_ptr wid)
     }
 
     //highlight cursor
-    if (lastmousex > wid->x && lastmousey > wid->y) {
-	i = (lastmousex - padding - border - wid->x) / (cellw + border);
-	j = (lastmousey - padding - border - wid->y) / (cellh + border);
-	if (i < boardw && j < boardh) {
-	    rect.x = (cellw + border) * i + padding;
-	    rect.y = (cellh + border) * j + padding;
-	    rect.w = cellw + 2 * border;
-	    rect.h = cellh + 2 * border;
-	    widget_fillrect(wid, &rect, c_highlight);
+    unsigned int col;
+    unsigned int row;
+    if(get_cell_from_mouse_position(wid,lastmousex,lastmousey,&col,&row) == 0)
+    {
+	/* highlight the cell the mouse is pointing at */
+	fill_arena_cell(wid,col,row,c_highlight);
+
+	if(wrap_flag)
+	{
+		/*
+		 * If the highlighted cell is an edge cell, also
+		 * highlight the corresponding cells on opposite
+		 * edges.  This will make it easier to work with large
+		 * wrapped grids.
+		 */
+		if(col == 0)
+			fill_arena_cell(wid,boardw - 1,row,c_edgematch);
+		else
+		if(col == boardw - 1)
+			fill_arena_cell(wid,0,row,c_edgematch);
+
+		if(row == 0)
+			fill_arena_cell(wid,col,boardh - 1,c_edgematch);
+		else
+		if(row == boardh - 1)
+			fill_arena_cell(wid,col,0,c_edgematch);
 	}
     }
 
@@ -939,7 +1014,7 @@ void check_hs()
     }
 }
 
-void init_tileimg()
+void init_tileimg(SDL_Surface * tileimg[64],int bgcolor)
 {
     int i, j;
     SDL_PixelFormat *fmt = screen->format;
@@ -951,9 +1026,19 @@ void init_tileimg()
     pipew = cellw / 2 + pipet / 2;
     pipeh = cellh / 2 + pipet / 2;
 
+    SDL_Rect entirecell = (SDL_Rect){
+	.x = 0,
+	.y = 0,
+	.w = cellw,
+	.h = cellh
+    };
+
     for (i=0; i<64; i++) {
 	tileimg[i] = SDL_CreateRGBSurface(0, cellw, cellh, fmt->BitsPerPixel,
 	    fmt->Rmask, fmt->Gmask, fmt->Bmask, fmt->Amask);
+
+	SDL_FillRect(tileimg[i], &entirecell, ctable[bgcolor]);
+
 	for (j=0; j<4; j++) {
 	    if ((i + 1) & (1 << j)) {
 		switch (j) {
@@ -1071,18 +1156,31 @@ void resize()
     widget_put_geometry((widget_ptr) l_about2, 10, 30, 60, vsize);
     widget_put_geometry((widget_ptr) b_about1, 30, 80, 30, vsize);
 
+    /* vertical sizes and positions for the high score window */
+    int const hslabely = 5;
+    int const hslabelheight = vsize;
+    int const hslisty = hslabely + hslabelheight + 8;
+    int const hslisteachheight = vsize;
+    int const hslistheight = hslisteachheight * level_max;
+    int const hsoky = hslisty + hslistheight + 8;
+    int const hsokheight = vsize;
+    int const hswindowheight = hsoky + hsokheight + 5;
+
     widget_put_geometry((widget_ptr) hs_window,
-	    w/2 - 75, h/2 - 60, 150, 120);
-    widget_put_geometry((widget_ptr) l_hs1, 10, 5, 60, vsize);
-    widget_put_geometry((widget_ptr) b_hs1, 100, 100, 30, vsize);
+	    w/2 - 75, h/2 - 60, 170, hswindowheight);
+    widget_put_geometry((widget_ptr) l_hs1, 10, hslabely, 60, hslabelheight);
+    widget_put_geometry((widget_ptr) b_hs1, 100, hsoky, 30, hsokheight);
 
     {
 	int i;
 	for (i=0; i<level_max; i++) {
-	    int y = vsize * i + 8 + vsize;
-	    widget_put_geometry((widget_ptr) hsw[i]->level, 10, y, 20, vsize);
-	    widget_put_geometry((widget_ptr) hsw[i]->time, 60, y, 20, vsize);
-	    widget_put_geometry((widget_ptr) hsw[i]->name, 90, y, 20, vsize);
+	    int y = hslisty + (hslisteachheight * i);
+	    widget_put_geometry((widget_ptr) hsw[i]->level,
+		10, y, 20, hslisteachheight);
+	    widget_put_geometry((widget_ptr) hsw[i]->time,
+		60, y, 20, hslisteachheight);
+	    widget_put_geometry((widget_ptr) hsw[i]->name,
+		90, y, 20, hslisteachheight);
 	}
     }
 
@@ -1121,12 +1219,23 @@ void new_game()
 	    wrap_flag = 1;
 	    no_fourway = 1;
 	    break;
+	case level_giant:
+	    boardw = 50; boardh = 50;
+	    wrap_flag = 0;
+	    no_fourway = 1;
+	    break;
+	case level_absurd:
+	    boardw = 50; boardh = 50;
+	    wrap_flag = 1;
+	    no_fourway = 1;
+	    break;
 	default:
 	    break;
     }
     resize();
     srand(time(NULL));
     generate_maze();
+    clear_flags();
     scramble();
     check_live();
     reset_move_count();
@@ -1224,6 +1333,9 @@ void arena_handle_click(widget_ptr p, int button, int x, int y)
     board[sourcex][sourceytop] &= ~1;
     board[sourcex][sourceytop] |= board[sourcex][sourceybottom] & 1;
     board[sourcex][sourceybottom] &= ~1;
+
+    if(button == SDL_BUTTON_MIDDLE)
+	flags[i][j] ^= 0x1;
 
     check_live();
     if (game_won) {
@@ -1432,6 +1544,8 @@ int main(int argc, char *argv[])
     level_name[level_medium] = "Normal";
     level_name[level_hard] = "Nerd";
     level_name[level_veryhard] = "Nutcase";
+    level_name[level_giant] = "Nonsense";
+    level_name[level_absurd] = "No Sleep";
 
     //setup shifttable
     {
@@ -1605,7 +1719,8 @@ int main(int argc, char *argv[])
 
     update_hsw();
 
-    init_tileimg();
+    init_tileimg(unmarked_tileimg,c_unmarkedbg);
+    init_tileimg(marked_tileimg,c_markedbg);
     new_game();
 
     while (state != state_quit && !interrupted) {

@@ -42,7 +42,10 @@ enum {
     c_border,
     c_borderwon,
     c_highlight,
+    c_edgematch,
     c_pulse,
+    c_unmarkedbg,
+    c_markedbg,
     c_max
 };
 

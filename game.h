@@ -22,12 +22,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define GAME_H
 
 enum {
-    boardmaxw = 20,
-    boardmaxh = 20,
+    boardmaxw = 50,
+    boardmaxh = 50,
 };
 extern int boardw, boardh;
 extern int board[boardmaxw][boardmaxh];
 extern int neighbourcount[boardmaxw][boardmaxh];
+extern int flags[boardmaxw][boardmaxh];
 extern int sourcex, sourceytop, sourceybottom;
 extern int wrap_flag;
 extern int no_fourway;
@@ -46,6 +47,7 @@ extern coord_s dir[4];
 //    |
 //    2
 
+void clear_flags();
 void generate_maze();
 int rotatecw(int d, int n);
 void scramble();

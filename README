@@ -1,4 +1,4 @@
-README for NetWalk v0.4.6
+README for NetWalk v0.4.7
 Ben Lynn
 
 INTRODUCTION
@@ -14,6 +14,9 @@ USAGE
 
 Click on a square to rotate its contents. A left click performs an
 anticlockwise rotation and a right click performs a clockwise rotation.
+A middle click marks a square which has no effect on gameplay but may
+be useful. For example, one could mark cells that are known to have the
+correct orientation.
 
 There is one shortcut key: F2 starts a new game.
 

@@ -36,7 +36,10 @@ void init_rgbtable()
     init_rgb(c_menubg, 0, 50, 0);
     init_rgb(c_shadow, 20, 100, 20);
     init_rgb(c_darkshadow, 0, 0, 0);
+    /* border highlight for cell that the mouse is pointing at */
     init_rgb(c_highlight, 180, 255, 180);
+    /* border highlight for cell on an opposite edge */
+    init_rgb(c_edgematch, 127, 127, 127);
     init_rgb(c_text, 255, 255, 255);
     init_rgb(c_invtext, 0, 0, 0);
     init_rgb(c_canvas, 0, 0, 0);
@@ -51,6 +54,10 @@ void init_rgbtable()
     init_rgb(c_pulse, 255, 255, 255);
     init_rgb(c_borderwon, 0, 127, 127);
     init_rgb(c_border, 0, 127, 0);
+    /* background color for unmarked tile */
+    init_rgb(c_unmarkedbg, 0, 0, 0);
+    /* background color for marked tile */
+    init_rgb(c_markedbg, 0, 0, 127);
 }
 
 void init_ctable(SDL_PixelFormat *format)

@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 int boardw = 10, boardh = 9;
 int board[boardmaxw][boardmaxh];
 int neighbourcount[boardmaxw][boardmaxh];
+int flags[boardmaxw][boardmaxh];
 int sourcex, sourceytop, sourceybottom;
 
 int wrap_flag = 0;
@@ -61,6 +62,17 @@ void add_dir(int *x, int *y, int x1, int y1, int d)
 	if (*y < 0) *y = boardh - 1;
 	if (*y >= boardh) *y = 0;
     }
+}
+
+void clear_flags()
+{
+	int i;
+	for(i = 0;i < boardw;i++)
+	{
+		int j;
+		for(j = 0;j < boardh;j++)
+			flags[i][j] = 0;
+	}
 }
 
 void generate_maze()
