@@ -1633,7 +1633,7 @@ void handle_key(int key, int mod)
 		break;
 	    default:
 		if (key < 256 && key >= 32) {
-		    if (mod && KMOD_SHIFT) {
+		    if (mod & KMOD_SHIFT) {
 			textbox_insert(tb_en1, shifttable[key]);
 		    } else {
 			textbox_insert(tb_en1, key);
@@ -1898,6 +1898,8 @@ int main(int argc, char *argv[])
     //setup shifttable
     {
 	int i;
+
+	for (i=0; i<256; i++) shifttable[i] = i;
 
 	for (i='a'; i<='z'; i++) {
 	    shifttable[i] = i - 32;

@@ -15,7 +15,7 @@ endif
 $(PROJNAME) : main.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-VERSION=0.4.1
+VERSION=0.4.2
 DISTNAME=$(PROJNAME)-$(VERSION)
 
 dist: $(ALLFILES)
