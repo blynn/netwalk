@@ -1,0 +1,4 @@
+%s/gcc/i586-mingw32msvc-gcc/
+%s/strip/i586-mingw32msvc-strip/
+w
+q
