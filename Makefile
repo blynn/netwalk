@@ -1,5 +1,5 @@
-VERSION=0.4.7
-ALLFILES = *.[ch] Makefile LICENSE README NEWS linux/*.[ch] win32/*.[ch] helmetr.ttf
+VERSION=0.4.8
+ALLFILES = *.[ch] Makefile LICENSE README copyright NEWS linux/*.[ch] win32/*.[ch] Vera.ttf
 PROJNAME = netwalk
 OS ?= linux
 ifeq ("$(OS)", "win32")

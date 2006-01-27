@@ -1,4 +1,4 @@
-README for NetWalk v0.4.7
+README for NetWalk v0.4.8
 Ben Lynn
 
 INTRODUCTION
@@ -30,3 +30,7 @@ LICENSE
 
 This project is released under the GNU Public License. See the "LICENSE" file
 for details.
+
+The font Bitstream Vera is included. I copied "Vera.ttf" from a
+Debian GNU/Linux distribution along with its accompanying copyright notice.
+The copyright notice is the file named "copyright".

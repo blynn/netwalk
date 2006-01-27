@@ -45,7 +45,7 @@ FILE *config_get_fp()
 	    fprintf(stderr, "Can't create %s\n", config_file);
 	    exit(1);
 	}
-	fprintf(fp, "font %s/helmetr.ttf\n", NETWALK_SHARE_DIR);
+	fprintf(fp, "font %s/Vera.ttf\n", NETWALK_SHARE_DIR);
 	fprintf(fp, "fontsize 11\n");
 	fprintf(fp, "hiscores %s/hiscores.txt\n", netwalk_dir);
 	fprintf(fp, "showmoves 0\n");
