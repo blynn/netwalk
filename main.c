@@ -1198,6 +1198,11 @@ void resize()
 
 void new_game()
 {
+    char s[BUFSIZ];
+    strcpy(s,"NetWalk - ");
+    strcat(s,level_name[level]);
+    SDL_WM_SetCaption(s,s);
+
     switch(level) {
 	case level_easy:
 	    boardw = 5; boardh = 5;

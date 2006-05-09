@@ -1,4 +1,4 @@
-VERSION=0.4.8
+VERSION=0.4.9
 ALLFILES = *.[ch] Makefile LICENSE README copyright NEWS linux/*.[ch] win32/*.[ch] Vera.ttf
 PROJNAME = netwalk
 OS ?= linux

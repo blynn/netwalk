@@ -1,3 +1,9 @@
+Tue May  9 13:19:01 PDT 2006
+    Applied hymie's <http://www.smart.net/~hymowitz> patch. Window caption
+    now shows difficulty level.
+
+    [netwalk-0.4.9.tgz]
+
 Thu Jan 26 23:44:22 PST 2006
     Changed the font: uses Vera.ttf instead of helmetr.ttf.
 
