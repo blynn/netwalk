@@ -1,12 +1,10 @@
 #include "config.h"
+#include "sharedir.h"
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#define NETWALK_SHARE_DIR "."
-//#define NETWALK_SHARE_DIR "/usr/share/netwalk"
 
 FILE *config_get_fp()
 {

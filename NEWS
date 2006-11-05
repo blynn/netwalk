@@ -1,3 +1,8 @@
+Sat Nov  4 19:26:33 PST 2006
+    Fixed installation bugs reported by Peter Suetterlin.
+
+    [netwalk-0.4.10.tgz]
+
 Tue May  9 13:19:01 PDT 2006
     Applied hymie's <http://www.smart.net/~hymowitz> patch. Window caption
     now shows difficulty level.

@@ -1,4 +1,4 @@
-VERSION=0.4.9
+VERSION=0.4.10
 ALLFILES = *.[ch] Makefile LICENSE README copyright NEWS linux/*.[ch] win32/*.[ch] Vera.ttf
 PROJNAME = netwalk
 OS ?= linux
@@ -18,8 +18,15 @@ endif
 
 .PHONY: target clean dist
 
-target : version.h $(PROJNAME)
+target : version.h sharedir.h $(PROJNAME)
 
+sharedir.h : ./Makefile
+ifeq ("$(OS)", "win32")
+	echo '#define NETWALK_SHARE_DIR "."' > sharedir.h
+else
+	echo '#define NETWALK_SHARE_DIR "'$(PREFIX)'/share/netwalk"' > sharedir.h
+
+endif
 version.h : ./Makefile
 	echo '#define VERSION_STRING "'$(VERSION)'"' > version.h
 
@@ -56,9 +63,10 @@ zip : target
 else
 
 install : netwalk
+	$(INSTALL) -d $(PREFIX)/bin
 	$(INSTALL) -m 755 netwalk $(PREFIX)/bin
 	$(INSTALL) -d $(PREFIX)/share/$(PROJNAME)
-	$(INSTALL) -m 644 helmetr.ttf $(PREFIX)/share/$(PROJNAME)/
+	$(INSTALL) -m 644 Vera.ttf $(PREFIX)/share/$(PROJNAME)/
 
 uninstall : clean
 	-rm -f $(PREFIX)/bin/$(PROJNAME)
