@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# One-shot git importer for Netwalk.
+#
+# Usage: Extract all tarballs up to 0.4.10 inclusive in some temporary
+# directory, and then run:
+#  $ export-to-git > /tmp/some_file
+# Then, in a new subdirectory, run:
+#  $ git init && git fast-import --date-format=rfc2822 < /tmp/some_file
+# to create the repo
+
+dumpfile() {
+  echo -n "M 100644 inline "
+  if [[ $1 == "." ]]; then
+    echo $2
+  else
+    echo $1/$2
+  fi
+  echo "data "$(stat -c%s $2)
+  cat $2
+  echo
+}
+
+docurdir()
+{
+  for F in *; do
+    if [[ -f $F ]]; then
+      dumpfile $1 $F
+    elif [[ -d $F ]]; then
+      cd $F
+      if [[ $1 == "." ]]; then
+	docurdir $F
+      else
+	docurdir $1/$F
+      fi
+      cd ..
+    else
+      echo WARNING! NO IDEA WHAT $F IS
+    fi
+  done
+}
+
+revnews()
+{
+  TMPFILE=$(mktemp)
+
+  while [ 1 ]; do
+    IFS=""
+    read LINE
+    if [ $? != 0 ]; then
+      break
+    fi
+    echo $LINE >> $TMPFILE
+    if [[ $LINE =~ ^[A-Z].*200.$ ]]; then
+      tac $TMPFILE
+      rm $TMPFILE
+    fi
+  done
+  if [ -f $TMPFILE ]; then
+    rm $TMPFILE
+  fi
+}
+
+cp netwalk-0.3.2/HISTORY bighistory
+echo >> bighistory
+tac netwalk-0.4.10/NEWS | revnews >> bighistory
+
+LAST=""
+# Version numbers don't sort well
+LIST="$(ls -d netwalk* | grep -v netwalk-0.4.10) netwalk-0.4.10"
+for DIR in $LIST; do
+  cd $DIR
+  if [[ -f HISTORY ]]; then
+    HISTFILE="HISTORY"
+    DATE=$(grep '^[A-Z]' $HISTFILE | tail -1)
+  else
+    HISTFILE="NEWS"
+    DATE=$(grep '^[A-Z]' $HISTFILE | head -1)
+  fi
+  echo "commit refs/heads/master
+committer "Ben Lynn" <blynn@cs.stanford.edu> $DATE
+data <<EOT"
+  if [[ $LAST == "" ]]; then
+    cat $HISTFILE
+  else
+    sed -n '/'$LAST'\.tgz/,/'$DIR'\.tgz/p' < ../bighistory | sed -n '/^$/,$p' | sed -n '/^[A-Z]/,$p'
+  fi
+  echo "EOT
+"
+  echo "deleteall"
+  docurdir .
+
+  LAST=$DIR
+  cd ..
+done
