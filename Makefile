@@ -73,3 +73,7 @@ uninstall : clean
 	-rm -rf $(PREFIX)/share/$(PROJNAME)
 
 endif
+
+public :
+	git push git+ssh://repo.or.cz/srv/git/netwalk.git
+	git push git@github.com:blynn/netwalk.git
