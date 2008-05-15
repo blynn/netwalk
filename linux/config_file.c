@@ -19,7 +19,7 @@ FILE *config_get_fp()
 	fprintf(stderr, "$HOME is not set\n");
 	exit(1);
     }
-    
+
     netwalk_dir = malloc(strlen(home_dir) + 100);
     config_file = malloc(strlen(home_dir) + 100);
 

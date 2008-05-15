@@ -195,9 +195,9 @@ label_t l_time;
 menubar_t menu;
 menuitem_ptr openedmenu;
 window_ptr modalwindow;
-window_t about_window; 
-window_t hs_window; 
-window_t enter_name_window; 
+window_t about_window;
+window_t hs_window;
+window_t enter_name_window;
 label_t l_about1;
 label_t l_about2;
 button_t b_about1;
@@ -586,7 +586,7 @@ void set_video(int w, int h)
 
     screen = SDL_SetVideoMode(w, h, 0, flags);
     init_ctable(screen->format);
-    
+
     if (!screen) {
 	fprintf(stderr, "Can't set video mode: %s\n", SDL_GetError());
 	exit(1);
@@ -1119,7 +1119,7 @@ void reset_time()
 void update_time()
 {
     static char s[80];
-    
+
     ms_count += tick - tick_old;
     while (ms_count >= 1000) {
 	ms_count -= 1000;

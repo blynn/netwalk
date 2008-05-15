@@ -17,7 +17,7 @@ static void parse_option(config_ptr config, char *s1, char *s2)
     }
 }
 
-static int is_whitespace(char c) 
+static int is_whitespace(char c)
 {
     if (strchr(" \t\r\n", c)) return -1;
     return 0;

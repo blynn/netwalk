@@ -11,7 +11,7 @@ else
 CC = gcc
 CFLAGS=-Wall -O2 -fomit-frame-pointer `sdl-config --cflags`
 SDL_LIBS=`sdl-config --libs`
-LIBS = $(SDL_LIBS) -lSDL_ttf 
+LIBS = $(SDL_LIBS) -lSDL_ttf
 INSTALL = /usr/bin/install
 PREFIX = /usr
 endif

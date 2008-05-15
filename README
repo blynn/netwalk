@@ -18,7 +18,12 @@ A middle click marks a square which has no effect on gameplay but may
 be useful. For example, one could mark cells that are known to have the
 correct orientation.
 
-There is one shortcut key: F2 starts a new game.
+Keys:
+
+F2  Start a new game.
+ESC Quit.
+q   Quit.
+d   Edit name for high scores.
 
 Edit the ".netwalk/config" file to configure the game.
 
