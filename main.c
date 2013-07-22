@@ -585,6 +585,8 @@ void set_video(int w, int h)
     flags = SDL_DOUBLEBUF;
 
     screen = SDL_SetVideoMode(w, h, 0, flags);
+    // flags = SDL_FULLSCREEN;
+    // screen = SDL_SetVideoMode(0, 0, 0, flags);
     init_ctable(screen->format);
 
     if (!screen) {

@@ -75,5 +75,6 @@ uninstall : clean
 endif
 
 public :
+	git push https://code.google.com/p/netwalk/
 	git push git+ssh://repo.or.cz/srv/git/netwalk.git
 	git push git@github.com:blynn/netwalk.git
