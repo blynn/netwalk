@@ -39,7 +39,7 @@ $(PROJNAME) : main.c game.c colour.c widget.c config.c config_file.c
 DISTNAME=$(PROJNAME)-$(VERSION)
 
 clean :
-	-rm $(PROJNAME) *.o version.h config_file.c
+	-rm $(PROJNAME) *.o version.h config_file.c sharedir.h
 
 dist: $(ALLFILES) clean
 	-rm -rf $(DISTNAME)
