@@ -1,5 +1,5 @@
-VERSION=0.4.10
-ALLFILES = *.[ch] Makefile LICENSE README copyright NEWS linux/*.[ch] win32/*.[ch] Vera.ttf
+VERSION=0.4.11
+ALLFILES = *.[ch] Makefile LICENSE README copyright linux/*.[ch] win32/*.[ch] Vera.ttf
 PROJNAME = netwalk
 OS ?= linux
 ifeq ("$(OS)", "win32")
@@ -7,6 +7,7 @@ CC = i586-mingw32msvc-gcc
 CFLAGS=-O2 -Wall -I /home/ben/cross/SDL/include/SDL -mwindows
 SDL_LIBS=-L /home/ben/cross/SDL/lib -lmingw32 -lSDLmain -lSDL
 LIBS = $(SDL_LIBS) -lSDL_ttf
+SHARE_DIR=.
 else
 CC = gcc
 CFLAGS=-Wall -O2 -fomit-frame-pointer `sdl-config --cflags`
@@ -14,6 +15,7 @@ SDL_LIBS=`sdl-config --libs`
 LIBS = $(SDL_LIBS) -lSDL_ttf
 INSTALL = /usr/bin/install
 PREFIX = /usr
+SHARE_DIR=$(PREFIX)/share/netwalk
 endif
 
 .PHONY: target clean dist
@@ -21,12 +23,8 @@ endif
 target : version.h sharedir.h $(PROJNAME)
 
 sharedir.h : ./Makefile
-ifeq ("$(OS)", "win32")
-	echo '#define NETWALK_SHARE_DIR "."' > sharedir.h
-else
-	echo '#define NETWALK_SHARE_DIR "'$(PREFIX)'/share/netwalk"' > sharedir.h
+	echo '#define NETWALK_SHARE_DIR "'$(SHARE_DIR)'"' > sharedir.h
 
-endif
 version.h : ./Makefile
 	echo '#define VERSION_STRING "'$(VERSION)'"' > version.h
 
