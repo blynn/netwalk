@@ -1,11 +1,11 @@
-VERSION=0.4.11
+VERSION=0.4.12
 ALLFILES = *.[ch] Makefile LICENSE README copyright linux/*.[ch] win32/*.[ch] Vera.ttf
 PROJNAME = netwalk
 OS ?= linux
 ifeq ("$(OS)", "win32")
 CC = i586-mingw32msvc-gcc
-CFLAGS=-O2 -Wall -I /home/ben/cross/SDL/include/SDL -mwindows
-SDL_LIBS=-L /home/ben/cross/SDL/lib -lmingw32 -lSDLmain -lSDL
+CFLAGS=-O2 -Wall -I /home/blynn/cross/SDL/include/SDL -I /home/blynn/cross/SDL_ttf/include -mwindows
+SDL_LIBS=-L /home/blynn/cross/SDL/lib -lmingw32 -lSDLmain -lSDL
 LIBS = $(SDL_LIBS) -lSDL_ttf
 SHARE_DIR=.
 else
@@ -54,8 +54,8 @@ zip : target
 	cp -l $(PROJNAME) $(DISTNAME)/$(PROJNAME).exe
 	cp -l *.ttf $(DISTNAME)
 	#cp -l config $(DISTNAME)
-	cp -l /home/ben/cross/SDL/lib/SDL.dll $(DISTNAME)
-	cp -l /home/ben/cross/SDL/lib/SDL_ttf.dll $(DISTNAME)
+	cp -l /home/blynn/cross/SDL/lib/SDL.dll $(DISTNAME)
+	cp -l /home/blynn/cross/SDL/lib/SDL_ttf.dll $(DISTNAME)
 	zip $(DISTNAME)-win.zip $(DISTNAME)/*
 	-rm -rf $(DISTNAME)
 else
@@ -73,6 +73,5 @@ uninstall : clean
 endif
 
 public :
-	git push https://code.google.com/p/netwalk/ master
 	git push git+ssh://repo.or.cz/srv/git/netwalk.git master
 	git push git@github.com:blynn/netwalk.git master

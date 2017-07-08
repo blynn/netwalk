@@ -1,4 +1,4 @@
-README for NetWalk v0.4.11
+README
 Ben Lynn
 
 INTRODUCTION
@@ -30,6 +30,12 @@ Edit the ".netwalk/config" file to configure the game.
 COMPILATION
 
 Type "make" to compile.
+
+BROWSER VERSION
+
+By the way, I rewrote this game to work in web browsers:
+
+  http://crypto.stanford.edu/~blynn/play/netwalk
 
 LICENSE
 

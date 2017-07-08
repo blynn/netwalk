@@ -36,7 +36,6 @@ struct widget_s {
     void (*update)(struct widget_s *);
     void (*handle_click)(struct widget_s *, int, int, int);
     void (*computexy)(struct widget_s *);
-    //TODO: replace with hash table?
     void (*signal_handler[signal_count])(struct widget_s *w, void *data);
     void *data[signal_count];
 };

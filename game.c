@@ -66,24 +66,22 @@ void add_dir(int *x, int *y, int x1, int y1, int d)
 
 void clear_flags()
 {
-	int i;
-	for(i = 0;i < boardw;i++)
-	{
-		int j;
-		for(j = 0;j < boardh;j++)
-			flags[i][j] = 0;
-	}
+    int i;
+    for (i=0; i<boardw; i++)
+    {
+        int j;
+        for (j=0; j<boardh; j++)
+            flags[i][j] = 0;
+    }
 }
 
 void generate_maze()
 {
     coord_s opentile[boardmaxw * boardmaxh];
-    int n;
     int i, j;
     int x, y;
     int x1, y1;
-
-    n = 2;
+    int n = 2;
     opentile[0].x = sourcex;
     opentile[1].x = sourcex;
     opentile[0].y = sourceytop;
@@ -165,14 +163,11 @@ void generate_maze()
 int rotatecw(int d, int n)
 {
     int i;
-    int d1;
-
-    d1 = d;
     for (i=0; i<n; i++) {
-	d1 = (d1 << 1);
-	if (d1 >= 16) d1 -= 15;
+	d = (d << 1);
+	if (d >= 16) d -= 15;
     }
-    return d1;
+    return d;
 }
 
 void scramble()
@@ -225,14 +220,13 @@ void scramble()
 void check_live()
 {
     coord_s opentile[boardmaxw * boardmaxh];
-    int n;
     int i, j;
     int x, y;
     int x1, y1;
     int tilecount = 0;
     int livecount;
+    int n = 2;
 
-    n = 2;
     opentile[0].x = sourcex;
     opentile[1].x = sourcex;
     opentile[0].y = sourceytop;

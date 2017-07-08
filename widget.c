@@ -34,7 +34,6 @@ void widget_computexy(widget_ptr wid)
 void widget_init(widget_ptr wid)
 {
     int i;
-
     wid->parent = NULL;
     wid->update = NULL;
     wid->handle_click = NULL;
@@ -73,14 +72,12 @@ void widget_fill(widget_ptr w, int c)
     rect.y = w->y;
     rect.w = w->w;
     rect.h = w->h;
-
     SDL_FillRect(screen, &rect, ctable[c]);
 }
 
 void widget_fillrect(widget_ptr w, SDL_Rect *rect, int c)
 {
     SDL_Rect r;
-
     r.x = rect->x + w->x;
     r.y = rect->y + w->y;
     r.w = rect->w;
@@ -121,7 +118,6 @@ int in_widget(widget_ptr wid, int x, int y)
 void widget_box(widget_ptr w, int x0, int y0, int x1, int y1, int c)
 {
     SDL_Rect r;
-
     r.x = w->x + x0;
     r.y = w->y + y0;
     r.w = x1 - x0 + 1;
@@ -131,9 +127,8 @@ void widget_box(widget_ptr w, int x0, int y0, int x1, int y1, int c)
 
 void widget_raised_border(widget_ptr rect)
 {
-    int x0, y0;
-    x0 = rect->w - 1;
-    y0 = rect->h - 1;
+    int x0 = rect->w - 1;
+    int y0 = rect->h - 1;
     widget_box(rect, 1, y0 - 1, x0 - 1, y0 - 1, c_shadow);
     widget_box(rect, x0 - 1, 1, x0 - 1, y0 - 1, c_shadow);
 
@@ -152,9 +147,8 @@ void widget_raised_background(widget_ptr rect)
 
 void widget_lowered_border(widget_ptr rect)
 {
-    int x1, y1;
-    x1 = rect->w - 1;
-    y1 = rect->h - 2;
+    int x1 = rect->w - 1;
+    int y1 = rect->h - 2;
     widget_box(rect, 2, y1, x1 - 1, y1, c_background);
     widget_box(rect, x1 - 1, 2, x1 - 1, y1, c_background);
     y1++;

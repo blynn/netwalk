@@ -90,16 +90,6 @@ typedef struct hsentry_s hsentry_t[1];
 hsentry_t hstable[level_max];
 char *level_name[level_max];
 
-//TODO use this somehow
-struct gameparm_s {
-    int boardw, boardh;
-    int wrap;
-};
-typedef struct gameparm_s *gameparm_ptr;
-typedef struct gameparm_s gameparm_t[1];
-
-gameparm_t gp;
-
 static config_t config;
 
 SDL_Surface *screen;
@@ -151,7 +141,6 @@ typedef struct menuitem_s *menuitem_ptr;
 
 struct menu_s {
     struct widget_s widget;
-    //TODO: replace array with list
     menuitem_ptr item_list[64];
     int item_count;
 };
@@ -160,7 +149,6 @@ typedef struct menu_s *menu_ptr;
 
 struct menubar_s {
     struct widget_s widget;
-    //TODO: replace array with list
     menuitem_ptr item_list[64];
     int item_count;
 };
@@ -169,7 +157,6 @@ typedef struct menubar_s *menubar_ptr;
 
 struct window_s {
     struct widget_s widget;
-    //TODO: replace array with list
     struct widget_s *widget_list[64];
     int widget_count;
 
@@ -263,11 +250,8 @@ void menuitem_init(menuitem_ptr m)
 
 menuitem_ptr menuitem_new()
 {
-    menuitem_ptr it;
-
-    it = (menuitem_ptr) malloc(sizeof(menuitem_t));
+    menuitem_ptr it = (menuitem_ptr) malloc(sizeof(menuitem_t));
     menuitem_init(it);
-
     return it;
 }
 
@@ -315,7 +299,6 @@ void open_submenu(widget_ptr p,	void *data)
 void menuitem_set_submenu(menuitem_ptr it, menu_ptr m)
 {
     it->submenu = m;
-    //it->widget.signal_handler[signal_activate] = open_submenu;
     widget_put_handler((widget_ptr) it, open_submenu, signal_activate);
     m->widget.parent = (widget_ptr) it;
 }
@@ -348,10 +331,9 @@ void menubar_update(widget_ptr wid)
 
 void menubar_handle_click(widget_ptr p, int button, int x, int y)
 {
-    int i;
     menubar_ptr m = (menubar_ptr) p;
     menuitem_ptr it;
-
+    int i;
     for (i=0; i<m->item_count; i++) {
 	it = m->item_list[i];
 	if (in_widget((widget_ptr) it, x, y)) {
@@ -378,11 +360,9 @@ void menubar_add_item(menubar_ptr m, menuitem_ptr it)
 
 void menubar_auto_layout(menubar_ptr m)
 {
-    int i, x, y;
+    int i, x = 0, y = 0;
     menuitem_ptr it;
 
-    x = 0;
-    y = 0;
     for (i=0; i<m->item_count; i++) {
 	it = m->item_list[i];
 	if (it->img) {
@@ -481,8 +461,8 @@ void textbox_insert(textbox_ptr tb, char c)
 
 void textbox_update(widget_ptr p)
 {
-    SDL_Rect dst;
     textbox_ptr tb = (textbox_ptr) p;
+    SDL_Rect dst;
 
     dst.x = 0;
     dst.y = 0;
@@ -580,19 +560,15 @@ void button_put_text(button_ptr b, char *s)
 
 void set_video(int w, int h)
 {
-    int flags;
-    flags = SDL_DOUBLEBUF;
-
+    int flags = SDL_DOUBLEBUF;
     screen = SDL_SetVideoMode(w, h, 0, flags);
     // flags = SDL_FULLSCREEN;
     // screen = SDL_SetVideoMode(0, 0, 0, flags);
     init_ctable(screen->format);
-
     if (!screen) {
 	fprintf(stderr, "Can't set video mode: %s\n", SDL_GetError());
 	exit(1);
     }
-
     //SDL_ShowCursor(SDL_DISABLE);
 }
 
@@ -604,11 +580,8 @@ void set_interrupted(int i)
 void init()
 {
     int status;
-
     signal(SIGINT, set_interrupted);
     signal(SIGTERM, set_interrupted);
-
-    //if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
 	fprintf(stderr, "Can't init SDL: %s\n", SDL_GetError());
 	exit(1);
@@ -620,9 +593,7 @@ void init()
 	exit(-1);
     }
     atexit(TTF_Quit);
-
     SDL_WM_SetCaption("NetWalk", "NetWalk");
-
     SDL_EnableKeyRepeat(150, 50);
 }
 
@@ -641,13 +612,10 @@ int second_count;
 void draw_tile(widget_ptr wid, int i, int j)
 {
     SDL_Rect rect;
-    int index;
-
     rect.x = padding + border + i * (cellw + border);
     rect.y = padding + border + j * (cellh + border);
-
     int const marked = flags[i][j] & 0x1;
-    index = board[i][j] - 1;
+    int index = board[i][j] - 1;
     widget_blit(wid,
 	(marked?marked_tileimg:unmarked_tileimg)[index],
 	NULL,
@@ -801,17 +769,14 @@ void arena_update(widget_ptr wid)
 {
     int i, j;
     SDL_Rect rect;
-    int bc;
-    int c;
+    int bc = game_won ? c_borderwon : c_border;
+    int c  = game_won ? c_serverwon : c_server;
 
     //draw grid
     rect.x = padding;
     rect.y = padding;
     rect.w = cellw * boardw + (boardw + 1) * border;
     rect.h = border;
-
-    if (game_won) bc = c_borderwon;
-    else bc = c_border;
 
     for (i=0; i<=boardh; i++) {
 	widget_fillrect(wid, &rect, bc);
@@ -865,8 +830,6 @@ void arena_update(widget_ptr wid)
 	}
     }
     //draw server
-    if (game_won) c = c_serverwon;
-    else c = c_server;
 
     rect.x = padding + border + (cellw + border) * sourcex;
     rect.y = padding + border + (cellh + border) * sourceytop;
@@ -888,15 +851,11 @@ void arena_update(widget_ptr wid)
 
 char* read_field(FILE *fp)
 {
-    char *r;
-    int i;
-    char c;
+    char *r = (char *) malloc(1024);
+    int i = 0;
 
-    r = (char *) malloc(1024);
-    i = 0;
-
-    for(;;) {
-	c = getc(fp);
+    for (;;) {
+        char c = getc(fp);
 
 	if (feof(fp)) {
 	    free(r);
@@ -951,7 +910,7 @@ void read_hstable()
     fp = fopen(config->hsfile, "r");
     if (!fp) return;
 
-    for(i=0; i<level_max; i++) {
+    for (i=0; i<level_max; i++) {
 	char *s;
 	s = read_field(fp);
 	if (!s) goto done;
@@ -971,16 +930,12 @@ done:
 
 void write_hstable()
 {
-    FILE *fp;
-    int i;
-
-    fp = fopen(config->hsfile, "w");
+    FILE *fp = fopen(config->hsfile, "w");
     if (!fp) return;
-
-    for(i=0; i<level_max; i++) {
+    int i;
+    for (i=0; i<level_max; i++) {
 	fprintf(fp, "%s,%d\n", hstable[i]->name, hstable[i]->time);
     }
-
     fclose(fp);
 }
 
@@ -1085,14 +1040,6 @@ void init_tileimg(SDL_Surface * tileimg[64],int bgcolor)
 	rect.w-=2;
 	rect.y++;
 	rect.h-=2;
-	/*
-	SDL_FillRect(tileimg[i-1], &rect, ctable[c_off]);
-	SDL_FillRect(tileimg[i-1+16], &rect, ctable[c_on]);
-	rect.x++;
-	rect.w-=2;
-	rect.y++;
-	rect.h-=2;
-	*/
 	SDL_FillRect(tileimg[i-1], &rect, ctable[c_down]);
 	SDL_FillRect(tileimg[i-1+16], &rect, ctable[c_up]);
     }
@@ -1133,14 +1080,11 @@ void update_time()
 void resize()
 //position everything based on board size
 {
-    int w, h;
-
     sourcex = boardw / 2 - 1;
     sourceytop =  boardh / 2;
     sourceybottom = sourceytop + 1;
-
-    w = cellw * boardw + (boardw + 1) * border + 2 * padding;
-    h = cellh * boardh + (boardh + 1) * border + 2 * padding;
+    int w = cellw * boardw + (boardw + 1) * border + 2 * padding;
+    int h = cellh * boardh + (boardh + 1) * border + 2 * padding;
     widget_put_geometry(arena, 0, vsize, w, h);
     set_video(w, h + 2 * vsize);
     widget_put_geometry(root, 0, 0, w, h + 2 * vsize);
@@ -1535,7 +1479,6 @@ void window_init(window_ptr w)
 static void add_shiftstring(char *s1, char *s2)
 {
     int i;
-
     for (i=0; i<strlen(s1); i++) {
 	shifttable[(int) s1[i]] = s2[i];
     }
@@ -1627,10 +1570,10 @@ int main(int argc, char *argv[])
     }
 
     //setup the menus
+    menuitem_t it1, it2;
+    menu_t m1, m2;
     {
-	menuitem_t it1, it2;
 	menuitem_ptr it;
-	menu_t m1, m2;
 
 	intptr_t i;
 
