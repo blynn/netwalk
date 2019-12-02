@@ -16,6 +16,7 @@ LIBS = $(SDL_LIBS) -lSDL_ttf
 INSTALL = /usr/bin/install
 PREFIX = /usr
 SHARE_DIR=$(PREFIX)/share/netwalk
+BINDIR = $(PREFIX)/bin
 endif
 
 .PHONY: target clean dist
@@ -61,14 +62,14 @@ zip : target
 else
 
 install : netwalk
-	$(INSTALL) -d $(PREFIX)/bin
-	$(INSTALL) -m 755 netwalk $(PREFIX)/bin
-	$(INSTALL) -d $(PREFIX)/share/$(PROJNAME)
-	$(INSTALL) -m 644 Vera.ttf $(PREFIX)/share/$(PROJNAME)/
+	$(INSTALL) -d $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 755 netwalk $(DESTDIR)$(BINDIR)
+	$(INSTALL) -d $(DESTDIR)$(SHARE_DIR)
+	$(INSTALL) -m 644 Vera.ttf $(DESTDIR)$(SHARE_DIR)
 
 uninstall : clean
-	-rm -f $(PREFIX)/bin/$(PROJNAME)
-	-rm -rf $(PREFIX)/share/$(PROJNAME)
+	-rm -f $(DESTDIR)$(BINDIR)/netwalk
+	-rm -rf $(DESTDIR)$(SHARE_DIR)
 
 endif
 
