@@ -1080,7 +1080,7 @@ void update_time()
 void resize()
 //position everything based on board size
 {
-    sourcex = boardw / 2 - 1;
+    sourcex = (boardw - 1) / 2;
     sourceytop =  boardh / 2;
     sourceybottom = sourceytop + 1;
     int w = cellw * boardw + (boardw + 1) * border + 2 * padding;
