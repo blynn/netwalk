@@ -96,7 +96,6 @@ SDL_Surface *screen;
 TTF_Font *font;
 int lastmousex, lastmousey;
 char *player_name;
-int game_won;
 int state;
 
 struct button_s {
